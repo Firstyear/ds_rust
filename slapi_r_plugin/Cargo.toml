@@ -1,0 +1,11 @@
+[package]
+name = "slapi_r_plugin"
+version = "0.1.0"
+authors = ["william"]
+links = "slapd"
+build = "build.rs"
+
+[dependencies]
+libc = "0.2.0"
+clippy = {version = "*", optional = true}
+

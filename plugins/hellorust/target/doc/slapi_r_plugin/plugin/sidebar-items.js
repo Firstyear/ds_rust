@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Slapi_R_Plugin_FN",""],["Slapi_R_Plugin_Manager",""]]});

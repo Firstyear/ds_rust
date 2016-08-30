@@ -1,0 +1,15 @@
+[package]
+name = "hellorust"
+version = "0.1.0"
+authors = ["william"]
+
+[dependencies]
+libc = "0.2.0"
+slapi_r_plugin = { path = "../../slapi_r_plugin" }
+clippy = {version = "*", optional = true}
+
+[lib]
+name = "hellorust"
+crate-type = ["dylib"]
+
+

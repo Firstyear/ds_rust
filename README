@@ -1,0 +1,129 @@
+README rs/
+
+This folder contains a proof of concept of 389 Directory Server components in
+rust.
+
+The architecture of these libraries is:
+
+slapi_r_plugin -- (wraps and links) --> libslapd.la
+plugins/* --(links)--> slapi_r_plugin
+
+slapi_r_plugin contains rust definitions and macros that are copied from
+slapi_plugin.h. It provides wrappers to functions in slapi_plugin.h ie
+slapi_pblock_get().
+
+
+Plugins are built to *only* need native rust types! When the plugin actually
+registers itself, it is installing the slapi_r_plugin_manager into the DS
+code, and then finds all the correct rust calls. This allows it to proxy all
+the accessses and convert types.
+
+This example is an interaction between libslapd (Directory Server) and the
+rust plugin manager and rust plugin.
+
+
+libslapd                      slapi_r_plugin_mana                  hellorust
+
++------+                                                         +-------------+
+|      |               -- (1) slapi_r_plugin_init_fn -->         | (2) init    |
+|      |                                                         |     |       |
+|      |                        +-------------+                  |     v       |
+|      |                        |             | <- (3) new cb -- | plugin init |
+|      |  <- (4) add callback   |             |                  |             |
+|      |   -- (5) result -->    |             |                  |             |
+|      |                        |             | -- (6) result -> |             |
+|      |                        |             |                  |             |
+z      z                        z             z                  z             z
+|      |                        |             |                  |             |
+|      |                        |             | <- (N1) new cb --|             |
+|      |  <- (N2) add callback  |             |                  |             |
+|      |   -- (N3) result -->   |             |                  |             |
+|      |                        |             | - (N4) result -> |             |
+|      |                        |             |                  |             |
+z      z                        z             z                  z             z
+|      |                        |             |                  |             |
+|      |                        |             | <- (7) register  |             |
+|      |  <- (8) set private -- |             |                  |             |
+|      |    -- (9) result -->   |             |                  |             |
+|      |                        |             |                  |             |
+|      |  < (10) add srpm cbs - |             |                  |             |
+|      |   -- (11) result -->   |             |                  |             |
+|      |                        |             | - (12) result -> |             |
+|      |                        |             |                  | (13) done   |
+|      |                        |             |                  |             |
+z      z                        z             z                  z             z
+|      |                        |             |                  |             |
+|      |  -- (13) op call -->   |             |                  |             |
+|      |  <- (14) get private - |             |                  |             |
+|      |   -- (15) result -->   |             |                  |             |
+|      |                        | (16) get cb |                  |             |
+|      |                        |             | - (17) op call > |             |
+|      |                        |             | <- (18) result - |             |
+|      |                        | (19) wrap   |                  |             |
+|      |   <-- (20) result --   |             |                  |             |
++------+                        +-------------+                  +-------------+
+
+
+The key interaction is that hellorust is not registered to Directory Server:
+slapi_r_plugin_manager has all it's callbacks registered on Directory Server.
+When a request is made to the s_r_p_m, it looks up the current plugins rust
+callbacks, wraps the Slapi_PBlock into a Slapi_R_PBlock, and makes the call.
+
+The plugin then returns a Result<(), PluginOperationError>. s_r_p_m then
+transforms Ok(()) into constant::LDAP_SUCCESS, or Err(e), is converted to the
+correct Directory Server integer results and returned.
+
+This adds more code to the slapi_r_plugin library, but makes the interactions of
+the hellorust plugin very simple, and purely in rust types. This gives a safe
+abstraction boundary: A important aspect of using Rust! This means we have Safe
+Rust Plugins avaliable to us!
+
+
+
+In the future if directory server components were to be added to this as part
+of the main binary, they should be in:
+
+slapi_r_private/src/{modules}
+
+Calls follows arrows: Linker is opposite direction.
+
+We would then have the modules linked such that:
+
+Hybrid:
+
+    ns-slapd main()
+    |
+    \--> libslapd.so
+         |
+         |--> slapi_r_private() // Contains modules from "ground up" and build out.
+         |                      // Cannot depend on libslapd.so
+         |
+         \--> slapi_r_plugin() 
+              |
+              \--> plugins/<pluginname>()
+
+So while a transition were occuring, we build slapi_r_private out from the core
+up to assimilate more functions of libslapd.so.
+
+From the other side, we have slapi_r_plugin() that wraps calls to libslapd.so.
+
+Eventually, the two would meet in the middle, and we would have:
+
+Pure rust:
+
+    main()
+    |
+    \--> slapi_r_private()
+         |
+         |--> slapi_r_backend()
+         |    |
+         |    \--> backend-plugin
+         |
+         \--> slapi_r_plugin()
+              |
+              \--> plugins/<pluginname>()
+
+
+This design may be subject to change!!
+
+

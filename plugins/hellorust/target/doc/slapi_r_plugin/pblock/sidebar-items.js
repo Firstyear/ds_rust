@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Slapi_R_PBlock","Slapi_R_PBlock is a container that contains the slapi_pblock C type. Functions of Slapi_R_PBlock wrap and interact with the native C PBlock. By making this opaque, it gives us the ability to rework or improve  the structure without breaking the API of Slapi_R_PBlock."]]});

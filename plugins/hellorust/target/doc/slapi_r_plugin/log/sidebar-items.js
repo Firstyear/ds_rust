@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["slapi_r_log_error","Write a message to the Directory Server Error Log. Directory Server performs *no formatting* of this message. You must use format!() to message, to pre-format the message. This is useful anyway, As you likely want to be using Rust formatting types."]]});

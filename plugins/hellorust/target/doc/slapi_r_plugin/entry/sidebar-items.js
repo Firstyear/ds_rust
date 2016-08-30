@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Slapi_R_Entry","Slapi_R_Entry is a container for a slapi_entry C type. This represents an entry that has been retrieved from the revelant backend as part of an operation. By making this opaque, we create rewrite and improvement possibilities"]]});
