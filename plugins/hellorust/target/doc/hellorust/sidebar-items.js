@@ -1,1 +1,0 @@
-initSidebarItems({"fn":[["slapi_r_plugin_init_fn","A static C function exported from the .so that Directory Server can find to complete plugin registration."]]});

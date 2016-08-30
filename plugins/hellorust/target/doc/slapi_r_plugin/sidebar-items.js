@@ -1,1 +1,0 @@
-initSidebarItems({"macro":[["slapi_r_plugin_init!","This macro is imported by plugins to wrap their rust init functions. This allows complete transparency to C types to the rust plugin."]],"mod":[["constants",""],["entry",""],["error",""],["log",""],["pblock",""],["plugin",""]]});

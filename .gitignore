@@ -1,0 +1,4 @@
+slapi_r_plugin/target/*
+plugins/*/target/*
+Cargo.lock
+

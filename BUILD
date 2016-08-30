@@ -24,7 +24,7 @@ objectClass: top
 objectClass: nsSlapdPlugin
 objectClass: extensibleObject
 cn: hellorust
-nsslapd-pluginPath: /home/william/development/389ds/ds/rs/plugins/hellorust/target/debug/libhellorust
+nsslapd-pluginPath: libhellorust
 nsslapd-pluginInitfunc: slapi_r_plugin_init_fn
 nsslapd-pluginType: postoperation
 nsslapd-pluginEnabled: on
