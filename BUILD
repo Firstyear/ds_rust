@@ -5,14 +5,27 @@ To build:
 Right now, we haven't integrated the rust parts into the autotools build,
 so you will need to build and install manually.
 
-You will need rust-binary: It is your responsibility to find this.
+You will need rust and cargo: It is your responsibility to find this. Try
+fedora rawhide.
 
 This is tested on EL7 with rust 1.7.0
 
 ===================================================================
 
-cd slapi_r_plugin; cargo build
-cd plugins/hellorust; cargo build
+Ensure that DS and Nunc-stans are built *without* ASAN.
+
+If you use the prefix /opt/dirsrv, you need the following:
+
+.cargo/config
+
+[target.x86_64-unknown-linux-gnu.slapd]
+rustc-link-search = ["/opt/dirsrv/lib/dirsrv"]
+rustc-link-lib = ["slapd"]
+root = "/opt/dirsrv/lib/dirsrv"
+
+
+cd slapi_r_plugin; cargo test; cargo build
+cd plugins/hellorust; cargo test; cargo build
 sudo cp target/debug/libhellorust.so /opt/dirsrv/lib/dirsrv/plugins
 
 ===================================================================
