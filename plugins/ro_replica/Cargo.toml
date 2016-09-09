@@ -1,0 +1,12 @@
+[package]
+name = "ro_replica"
+version = "0.1.0"
+authors = ["william"]
+
+[dependencies]
+libc = "0.2.0"
+slapi_r_plugin = { path = "../../slapi_r_plugin" }
+
+[lib]
+name = "ro_replica"
+crate-type = ["dylib"]

@@ -81,8 +81,6 @@ extern fn hellorust_post_op( pb: &Slapi_R_PBlock ) -> Result<(), error::PluginOp
     };
     // Display them? 
 
-    // Inject the rust crab
-
     Ok(())
 }
 

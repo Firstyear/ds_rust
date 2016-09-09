@@ -175,7 +175,7 @@ extern fn slapi_r_plugin_post_search_cb(slapi_pblock: *const libc::c_void) -> is
     match log::slapi_r_log_error(
         constants::LogLevel::FATAL,
         SUBSYSTEM,
-        format!("Rust is intercepting a search operation \n")
+        format!("Rust is handling a post_search operation \n")
     ) {
         Ok(_) => {},
         // This type has to be error::LoggingError, so just catch all and return
