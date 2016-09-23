@@ -20,4 +20,6 @@ libhellorust.a:
 
 clean-local:
 	cd $(srcdir)/plugins/hellorust; cargo clean
+	cd $(srcdir)/slapi_r_plugin; cargo clean
+	rm $(srcdir)/libhellorust.{a,d,so}
 
