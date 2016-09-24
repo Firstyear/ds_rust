@@ -4,9 +4,9 @@ ACLOCAL_AMFLAGS = -I m4
 # hello_cargo_LDFLAGS = -ldl -lpthread -lgcc_s -lc -lm -lrt -lutil
 
 # Can we do this without over-riding libdir?
-libdir = ${exec_prefix}/lib/dirsrv/plugins
+serverplugindir = $(libdir)/dirsrv/plugins
 
-lib_LTLIBRARIES = libhellorust.la
+serverplugin_LTLIBRARIES = libhellorust.la
 
 am_libhellorust_la_OBJECTS = hellorust.o
 libhellorust_la_SOURCES = ""
@@ -22,4 +22,19 @@ clean-local:
 	cd $(srcdir)/plugins/hellorust; cargo clean
 	cd $(srcdir)/slapi_r_plugin; cargo clean
 	rm $(srcdir)/libhellorust.{a,d,so}
+
+RPMBUILD ?= $(abs_builddir)/rpmbuild
+
+rpmroot:
+	mkdir -p $(RPMBUILD)/BUILD
+	mkdir -p $(RPMBUILD)/RPMS
+	mkdir -p $(RPMBUILD)/SOURCES
+	mkdir -p $(RPMBUILD)/SPECS
+	mkdir -p $(RPMBUILD)/SRPMS
+
+rpmsources: rpmroot
+	cd $(srcdir); git archive --prefix=$(PACKAGE_NAME)-$(PACKAGE_VERSION)/ HEAD | gzip > $(RPMBUILD)/SOURCES/$(PACKAGE_NAME)-$(PACKAGE_VERSION).tar.gz
+
+rpms: rpmsources
+	rpmbuild --define "_topdir $(RPMBUILD)" -ba $(srcdir)/rpm/$(PACKAGE_NAME).spec
 
