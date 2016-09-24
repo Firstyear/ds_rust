@@ -1,9 +1,14 @@
 ACLOCAL_AMFLAGS = -I m4
 
-# Need to work out how to get this from rustc. May not need for .so
-# hello_cargo_LDFLAGS = -ldl -lpthread -lgcc_s -lc -lm -lrt -lutil
+# Install the example ldifs for enabling.
+exampledir = $(datadir)/dirsrv/examples
+helloexampledir = $(exampledir)/hellorust/
+# roexampledir = $(exampledir)/ro_replica/
 
-# Can we do this without over-riding libdir?
+helloexample_DATA = plugins/hellorust/enable.ldif
+
+
+# Actually build the plugins
 serverplugindir = $(libdir)/dirsrv/plugins
 
 serverplugin_LTLIBRARIES = libhellorust.la
