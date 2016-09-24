@@ -1,5 +1,8 @@
 ACLOCAL_AMFLAGS = -I m4
 
+# Extract the versions from cargo for the .so versions.
+hellorelease := $(shell $(srcdir)/sh/extract-cargo-release.sh $(srcdir)/plugins/hellorust/Cargo.toml)
+
 # Install the example ldifs for enabling.
 exampledir = $(datadir)/dirsrv/examples
 helloexampledir = $(exampledir)/hellorust/
@@ -16,6 +19,7 @@ serverplugin_LTLIBRARIES = libhellorust.la
 am_libhellorust_la_OBJECTS = hellorust.o
 libhellorust_la_SOURCES = ""
 libhellorust_la_LIBADD = libhellorust.a
+libhellorust_la_LDFLAGS = -release $(hellorelease)
 
 hellorust.o:
 	cd $(srcdir)/plugins/hellorust; cargo rustc -- --emit obj=$(abs_builddir)/$@
@@ -26,7 +30,7 @@ libhellorust.a:
 clean-local:
 	cd $(srcdir)/plugins/hellorust; cargo clean
 	cd $(srcdir)/slapi_r_plugin; cargo clean
-	rm $(srcdir)/libhellorust.{a,d,so}
+	rm $(srcdir)/libhellorust.{a,d,so}; true
 
 RPMBUILD ?= $(abs_builddir)/rpmbuild
 
