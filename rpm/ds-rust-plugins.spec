@@ -6,6 +6,7 @@ Release:          1%{?dist}
 License:          GPLv3+
 URL:              http://github.com/Firstyear/ds-rust-plugins
 Group:            Development/Libraries
+BuildRequires:    autoconf
 BuildRequires:    rust
 BuildRequires:    cargo
 BuildRequires:    389-ds-base-devel

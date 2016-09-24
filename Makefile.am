@@ -47,3 +47,7 @@ rpmsources: rpmroot
 rpms: rpmsources
 	rpmbuild --define "_topdir $(RPMBUILD)" -ba $(srcdir)/rpm/$(PACKAGE_NAME).spec
 
+srpms: rpmsources
+	rpmbuild --define "_topdir $(RPMBUILD)" -bs $(srcdir)/rpm/$(PACKAGE_NAME).spec
+
+
