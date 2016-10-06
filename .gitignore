@@ -38,3 +38,5 @@ stamp-h1
 *.la
 *.so
 
+*.pyc
+
