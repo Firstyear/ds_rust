@@ -24,6 +24,29 @@ use super::entry::Slapi_R_Entry;
 // By wrapping this, rather than passing libc::c_void around, it makes it opaque
 // giving us future re-write / modification options.
 
+/// Slapi_PBlock_V3 defines the set of functions that version 3 plugins expect
+/// to be present. This allows us to re-implement the version 3 pblock to plugins
+/// very easily, as well as allowing testing to occur.
+#[allow(non_camel_case_types)]
+pub trait Slapi_PBlock_V3 {
+    /// Get the plugin api version
+    fn get_plugin_version(&self) -> Option<isize>;
+    /// Set the plugin api version
+    fn set_plugin_version(&self, version: isize);
+    /// Set the plugin's closing function handler. This is used by init the macros
+    fn set_plugin_close_fn(&self, func: extern fn(*const libc::c_void) -> isize);
+    /// Set the plugin's start function handler. This is used by init the macros
+    fn set_plugin_start_fn(&self, func: extern fn(*const libc::c_void) -> isize);
+    /// Set the plugin's post search function handler. This is used by init the macros
+    fn set_plugin_post_search_fn(&self, func: extern fn(*const libc::c_void) -> isize);
+    /// Set the private data into the plugin.
+    fn get_plugin_private<T>(&self) -> Option<&T>;
+    /// Get the private data from the plugin.
+    fn set_plugin_private<T>(&self, value: T);
+    /// Destroy the private data stored in the plugin
+    fn destroy_plugin_private(&self) -> Result<(), PBlockError>;
+}
+
 #[derive(Debug)]
 #[allow(non_camel_case_types)]
 /// Slapi_R_PBlock is a container that contains the slapi_pblock C type.
@@ -149,9 +172,7 @@ impl Slapi_R_PBlock {
         }
     }
 
-    // Do we replicate the "get / set" based on a const? Or do we get / set per value type.
-    // Value type: Because this way we can change the values of const without breaking abi
-
+    // NOTE: The bellow will probably become part of the v3 interface.
 
     /// This will retrieve the value of SLAPI_PLUGIN_TYPE, such as BE_TXN,
     /// POST_OP etc.
@@ -175,37 +196,51 @@ impl Slapi_R_PBlock {
         self._set_isize(SLAPI_PLUGIN_OPRETURN, opreturn)
     }
 
+
+    // pub fn set_search_result_entry()
+
+    /// This will retrieve the next Slapi_R_Entry from the result set
+    /// in the pblock.
+    pub fn get_search_result_entry(&self) -> Option<Slapi_R_Entry> {
+        match self._get_void_ptr(SLAPI_SEARCH_RESULT_ENTRY) {
+            Some(p) => Some(Slapi_R_Entry::new(p)),
+            None => None,
+        }
+    }
+
+}
+
+impl Slapi_PBlock_V3 for Slapi_R_PBlock {
     /// This will get the plugin api version from SLAPI_PLUGIN_VERSION
     /// See also constants::PluginVersion
-    pub fn get_plugin_version(&self) -> Option<isize> {
+    fn get_plugin_version(&self) -> Option<isize> {
         self._get_isize(SLAPI_PLUGIN_VERSION)
     }
 
     /// This will set the plugin api version from SLAPI_PLUGIN_VERSION
     /// See also constants::PluginVersion
-    pub fn set_plugin_version(&self, version: isize) {
+    fn set_plugin_version(&self, version: isize) {
         self._set_isize(SLAPI_PLUGIN_VERSION, version)
     }
-
 
     /// This will set the close plugin callback handler as
     /// SLAPI_PLUGIN_CLOSE_FN. You should *not* call this directly
     /// as the Slapi_R_Plugin_Manager will handle this for you.
-    pub fn set_plugin_close_fn(&self, func: extern fn(*const libc::c_void) -> isize) {
+    fn set_plugin_close_fn(&self, func: extern fn(*const libc::c_void) -> isize) {
         self._set_pb_fn_ptr(SLAPI_PLUGIN_CLOSE_FN, func)
     }
 
     /// This will set the start plugin callback handler as
     /// SLAPI_PLUGIN_START_FN. You should *not* call this directly
     /// as the Slapi_R_Plugin_Manager will handle this for you.
-    pub fn set_plugin_start_fn(&self, func: extern fn(*const libc::c_void) -> isize) {
+    fn set_plugin_start_fn(&self, func: extern fn(*const libc::c_void) -> isize) {
         self._set_pb_fn_ptr(SLAPI_PLUGIN_START_FN, func)
     }
 
     /// This will set the post search operation plugin callback handler as
     /// SLAPI_PLUGIN_POST_SEARCH_FN. You should *not* call this directly
     /// as the Slapi_R_Plugin_Manager will handle this for you.
-    pub fn set_plugin_post_search_fn(&self, func: extern fn(*const libc::c_void) -> isize) {
+    fn set_plugin_post_search_fn(&self, func: extern fn(*const libc::c_void) -> isize) {
         self._set_pb_fn_ptr(SLAPI_PLUGIN_POST_SEARCH_FN, func)
     }
 
@@ -213,7 +248,7 @@ impl Slapi_R_PBlock {
     /// stash, from Slapi_PBlock.pb_plugin->plg_private. SLAPI_PLUGIN_PRIVATE
     /// You should *never* call this directly, as certain parts of the
     /// Slapi_R_Plugin_Manager rely on this data being un-tampered.
-    pub fn get_plugin_private<T>(&self) -> Option<&T> {
+    fn get_plugin_private<T>(&self) -> Option<&T> {
                                             // Should this value here be a ptr::null? 
         let mut value: *mut libc::c_void = 0usize as *mut libc::c_void;
         let value_ptr: *const libc::c_void = &mut value as *const _ as *const libc::c_void;
@@ -230,7 +265,7 @@ impl Slapi_R_PBlock {
     /// instance.
     /// Certain parts of Slapi_R_Plugin_Manager rely on this, so you should
     /// *never* call this directly.
-    pub fn set_plugin_private<T>(&self, value: T) {
+    fn set_plugin_private<T>(&self, value: T) {
         unsafe {
             let value_ptr = libc::malloc(mem::size_of::<T>() as libc::size_t) as *mut T;
             assert!(!value_ptr.is_null());
@@ -245,7 +280,7 @@ impl Slapi_R_PBlock {
     /// within the Slapi_PBlock instance.
     /// Certain parts of Slapi_R_Plugin_Manager rely on this, so you should
     /// *never* call this directly.
-    pub fn destroy_plugin_private(&self) -> Result<(), PBlockError> {
+    fn destroy_plugin_private(&self) -> Result<(), PBlockError> {
         let mut value: *mut libc::c_void = 0usize as *mut libc::c_void;
         let value_ptr: *const libc::c_void = &mut value as *const _ as *const libc::c_void;
         unsafe {
@@ -257,17 +292,6 @@ impl Slapi_R_PBlock {
             }
         }
         Ok(())
-    }
-
-    // pub fn set_search_result_entry()
-
-    /// This will retrieve the next Slapi_R_Entry from the result set
-    /// in the pblock.
-    pub fn get_search_result_entry(&self) -> Option<Slapi_R_Entry> {
-        match self._get_void_ptr(SLAPI_SEARCH_RESULT_ENTRY) {
-            Some(p) => Some(Slapi_R_Entry::new(p)),
-            None => None,
-        }
     }
 
 }

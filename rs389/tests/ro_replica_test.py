@@ -14,15 +14,15 @@ DEBUGGING = True
 
 from . import topology
 
-from rs389 import HellorustPlugin
+from rs389 import RoreplicaPlugin
 
 def test_setup_ds_minimal(topology):
     # Make sure we can start stop.
 
-    hrp = HellorustPlugin(topology.standalone)
-    hrp.create()
+    rorp = RoreplicaPlugin(topology.standalone)
+    rorp.create()
     topology.standalone.stop()
     topology.standalone.start()
-    assert(len(topology.standalone.ds_error_log.match('.*Hello rust\!.*')) > 0)
+    assert(len(topology.standalone.ds_error_log.match('.*ro_replica started.*')) > 0)
 
 

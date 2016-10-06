@@ -27,34 +27,43 @@ use slapi_r_plugin::log;
 use slapi_r_plugin::error;
 use slapi_r_plugin::constants;
 use slapi_r_plugin::plugin::Slapi_R_Plugin_Manager;
-use slapi_r_plugin::pblock::Slapi_R_PBlock;
+use slapi_r_plugin::plugin::Slapi_Plugin_V3;
+use slapi_r_plugin::pblock::Slapi_PBlock_V3;
 
 
-///
-/// This is the initialisation function for the Ro Replica Rust plugin.
-///
-/// This function will assign all the callbacks from this function into
-/// Directory Server.
-///
-extern fn ro_replica_init( pb: Slapi_R_PBlock ) -> Result<(), error::PluginRegistrationError> {
+struct RoReplicaPlugin {
+    // Is there a way to make this without a field here?
+    x: isize,
+}
 
-    match log::slapi_r_log_error(constants::LogLevel::FATAL, SUBSYSTEM, format!("Hello rust!\n")) {
-        Ok(_) => {},
-        Err(_) => return Err(error::PluginRegistrationError::LoggingError),
-    };
+impl Slapi_Plugin_V3 for RoReplicaPlugin {
+    ///
+    /// This is the initialisation function for the Ro Replica Rust plugin.
+    ///
+    /// This function will assign all the callbacks from this function into
+    /// Directory Server.
+    ///
+    extern fn init<T: Slapi_PBlock_V3>( pb: T ) -> Result<(), error::PluginRegistrationError> {
 
-    let mut p_manager: Slapi_R_Plugin_Manager = Slapi_R_Plugin_Manager::new();
+        match log::slapi_r_log_error(constants::LogLevel::FATAL, SUBSYSTEM, format!("ro_replica started\n")) {
+            Ok(_) => {},
+            Err(_) => return Err(error::PluginRegistrationError::LoggingError),
+        };
 
-    match p_manager.register(pb) {
-        Ok(_) => Ok(()),
-        Err(err) => Err(err),
+        let mut p_manager: Slapi_R_Plugin_Manager = Slapi_R_Plugin_Manager::new();
+
+        match p_manager.register(pb) {
+            Ok(_) => Ok(()),
+            Err(err) => Err(err),
+        }
+
     }
 
 }
 
 // This is the magic that links a static no_mangle fn into the .so, and the rust
 // init types
-slapi_r_plugin_init!(ro_replica_init);
+slapi_r_plugin_init!(RoReplicaPlugin::init);
 
 
 #[cfg(test)]

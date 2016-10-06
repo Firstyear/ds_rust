@@ -20,8 +20,17 @@ use super::log;
 use super::error;
 use super::constants;
 use super::pblock::Slapi_R_PBlock;
+use super::pblock::Slapi_PBlock_V3;
 
 const SUBSYSTEM: &'static str = "slapi_r_plugin::plugin::mod";
+
+/// Defines the functions that *must* be implemented by a version 3 compatible
+/// plugin for directory server.
+#[allow(non_camel_case_types)]
+pub trait Slapi_Plugin_V3 {
+    /// The function that initialises the plugin. May do internal or other initilasation
+    extern fn init<T: Slapi_PBlock_V3>( pb: T ) -> Result<(), error::PluginRegistrationError>;
+}
 
 //#[repr(C)]
 //struct Slapi_PluginDesc {
@@ -225,7 +234,7 @@ impl<'a> Slapi_R_Plugin_Manager<'a> {
 
     /// Completes the registration to Directory Server of the plugin. This is
     /// the *last* function you call when building a plugin in a plugin init.
-    pub fn register(self, pb: Slapi_R_PBlock) -> Result<(), error::PluginRegistrationError> {
+    pub fn register<T: Slapi_PBlock_V3>(self, pb: T) -> Result<(), error::PluginRegistrationError> {
 
         match log::slapi_r_log_error(
             constants::LogLevel::FATAL,
@@ -274,6 +283,7 @@ impl<'a> Slapi_R_Plugin_Manager<'a> {
 macro_rules! slapi_r_plugin_init {
     ( $func:expr ) => (
         extern crate libc;
+        use slapi_r_plugin::pblock::Slapi_R_PBlock;
         /// A static C function exported from the .so that Directory Server can
         /// find to complete plugin registration.
         #[no_mangle]
