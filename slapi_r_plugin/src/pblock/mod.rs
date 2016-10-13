@@ -24,11 +24,11 @@ use super::entry::Slapi_R_Entry;
 // By wrapping this, rather than passing libc::c_void around, it makes it opaque
 // giving us future re-write / modification options.
 
-/// Slapi_PBlock_V3 defines the set of functions that version 3 plugins expect
-/// to be present. This allows us to re-implement the version 3 pblock to plugins
-/// very easily, as well as allowing testing to occur.
+/// Slapi_PBlock_Init_V3 defines the set of functions that a version 3 plugin
+/// requires access to for correct installation and initialisation of the plugin.
+/// This will only be used in the plugins' init function.
 #[allow(non_camel_case_types)]
-pub trait Slapi_PBlock_V3 {
+pub trait Slapi_PBlock_Init_V3 {
     /// Get the plugin api version
     fn get_plugin_version(&self) -> Option<isize>;
     /// Set the plugin api version
@@ -45,6 +45,14 @@ pub trait Slapi_PBlock_V3 {
     fn set_plugin_private<T>(&self, value: T);
     /// Destroy the private data stored in the plugin
     fn destroy_plugin_private(&self) -> Result<(), PBlockError>;
+}
+
+/// Slapi_PBlock_V3 defines the set of functions that version 3 plugins expect
+/// to be present. This allows us to re-implement the version 3 pblock to plugins
+/// very easily, as well as allowing testing to occur.
+#[allow(non_camel_case_types)]
+pub trait Slapi_PBlock_V3 {
+    fn get_search_result_entry(&self) -> Option<Slapi_R_Entry>;
 }
 
 #[derive(Debug)]
@@ -197,20 +205,9 @@ impl Slapi_R_PBlock {
     }
 
 
-    // pub fn set_search_result_entry()
-
-    /// This will retrieve the next Slapi_R_Entry from the result set
-    /// in the pblock.
-    pub fn get_search_result_entry(&self) -> Option<Slapi_R_Entry> {
-        match self._get_void_ptr(SLAPI_SEARCH_RESULT_ENTRY) {
-            Some(p) => Some(Slapi_R_Entry::new(p)),
-            None => None,
-        }
-    }
-
 }
 
-impl Slapi_PBlock_V3 for Slapi_R_PBlock {
+impl Slapi_PBlock_Init_V3 for Slapi_R_PBlock {
     /// This will get the plugin api version from SLAPI_PLUGIN_VERSION
     /// See also constants::PluginVersion
     fn get_plugin_version(&self) -> Option<isize> {
@@ -295,6 +292,20 @@ impl Slapi_PBlock_V3 for Slapi_R_PBlock {
     }
 
 }
+
+impl Slapi_PBlock_V3 for Slapi_R_PBlock {
+    // pub fn set_search_result_entry()
+
+    /// This will retrieve the next Slapi_R_Entry from the result set
+    /// in the pblock.
+    fn get_search_result_entry(&self) -> Option<Slapi_R_Entry> {
+        match self._get_void_ptr(SLAPI_SEARCH_RESULT_ENTRY) {
+            Some(p) => Some(Slapi_R_Entry::new(p)),
+            None => None,
+        }
+    }
+}
+
 
 // error: cannot move out of type `pblock::Slapi_R_PBlock`, which defines the `Drop` trait [E0509]
 // impl Drop for Slapi_R_PBlock {

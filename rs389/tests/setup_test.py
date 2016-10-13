@@ -19,6 +19,10 @@ from rs389 import HellorustPlugin
 def test_setup_ds_minimal(topology):
     # Make sure we can start stop.
 
+    #print("ATTACH NOW")
+    #import time
+    #time.sleep(30)
+
     hrp = HellorustPlugin(topology.standalone)
     hrp.create()
     topology.standalone.stop()

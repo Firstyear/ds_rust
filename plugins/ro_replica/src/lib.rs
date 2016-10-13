@@ -29,6 +29,7 @@ use slapi_r_plugin::constants;
 use slapi_r_plugin::plugin::Slapi_R_Plugin_Manager;
 use slapi_r_plugin::plugin::Slapi_Plugin_V3;
 use slapi_r_plugin::pblock::Slapi_PBlock_V3;
+use slapi_r_plugin::pblock::Slapi_PBlock_Init_V3;
 
 
 struct RoReplicaPlugin {
@@ -43,7 +44,7 @@ impl Slapi_Plugin_V3 for RoReplicaPlugin {
     /// This function will assign all the callbacks from this function into
     /// Directory Server.
     ///
-    extern fn init<T: Slapi_PBlock_V3>( pb: T ) -> Result<(), error::PluginRegistrationError> {
+    fn init<T: Slapi_PBlock_Init_V3>( pb: T ) -> Result<(), error::PluginRegistrationError> {
 
         match log::slapi_r_log_error(constants::LogLevel::FATAL, SUBSYSTEM, format!("ro_replica started\n")) {
             Ok(_) => {},
@@ -52,11 +53,34 @@ impl Slapi_Plugin_V3 for RoReplicaPlugin {
 
         let mut p_manager: Slapi_R_Plugin_Manager = Slapi_R_Plugin_Manager::new();
 
+        p_manager.functions.start = Some(RoReplicaPlugin::start);
+        p_manager.functions.close = Some(RoReplicaPlugin::close);
+
         match p_manager.register(pb) {
             Ok(_) => Ok(()),
             Err(err) => Err(err),
         }
 
+    }
+
+    /// A start callback, that allows the plugin to initialise and start any required
+    /// datastructures, etc.
+    fn start<T: Slapi_PBlock_V3>( pb: &T ) -> Result<(), error::PluginOperationError> {
+        match log::slapi_r_log_error(constants::LogLevel::FATAL, SUBSYSTEM, format!("Calling the ro_replica start callback \n") ) {
+            Ok(_) => {},
+            Err(_) => return Err(error::PluginOperationError::LoggingError),
+        };
+        Ok(())
+    }
+
+    /// A close callback, that allows the plugin to destroy any structuse made in
+    /// the start callback
+    fn close<T: Slapi_PBlock_V3>( pb: &T ) -> Result<(), error::PluginOperationError> {
+        match log::slapi_r_log_error(constants::LogLevel::FATAL, SUBSYSTEM, format!("Calling the ro_replica close callback \n") ) {
+            Ok(_) => {},
+            Err(_) => return Err(error::PluginOperationError::LoggingError),
+        };
+        Ok(())
     }
 
 }

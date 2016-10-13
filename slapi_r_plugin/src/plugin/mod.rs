@@ -14,13 +14,12 @@
 
 use libc;
 
-// Can I use a c_char type from libc?
-// use std::os::raw::c_char;
 use super::log;
 use super::error;
 use super::constants;
 use super::pblock::Slapi_R_PBlock;
 use super::pblock::Slapi_PBlock_V3;
+use super::pblock::Slapi_PBlock_Init_V3;
 
 const SUBSYSTEM: &'static str = "slapi_r_plugin::plugin::mod";
 
@@ -29,16 +28,14 @@ const SUBSYSTEM: &'static str = "slapi_r_plugin::plugin::mod";
 #[allow(non_camel_case_types)]
 pub trait Slapi_Plugin_V3 {
     /// The function that initialises the plugin. May do internal or other initilasation
-    extern fn init<T: Slapi_PBlock_V3>( pb: T ) -> Result<(), error::PluginRegistrationError>;
+    fn init<T: Slapi_PBlock_Init_V3>( pb: T ) -> Result<(), error::PluginRegistrationError>;
+    /// The function that starts plugin operations. After this point, the other callbacks
+    /// may be triggered
+    fn start<T: Slapi_PBlock_V3>( pb: &T ) -> Result<(), error::PluginOperationError>;
+    /// The function that stops and cleans up plugin operation. After this is called, no
+    /// other callbacks will be called on the plugin.
+    fn close<T: Slapi_PBlock_V3>( pb: &T ) -> Result<(), error::PluginOperationError>;
 }
-
-//#[repr(C)]
-//struct Slapi_PluginDesc {
-//    id: *const c_char,
-//    vendor: *const c_char,
-//    version: *const c_char,
-//    description: *const c_char,
-//}
 
 ///
 /// Type that represents the possible call backs from a plugin.
@@ -48,13 +45,12 @@ pub trait Slapi_Plugin_V3 {
 ///
 #[allow(non_camel_case_types)]
 pub struct Slapi_R_Plugin_FN {
-    // pub post_search: Option<&'a Fn(&Slapi_R_PBlock) -> Result<(), error::PluginOperationError>>,
     /// On option type for a function callback that handles plugin start up.
-    pub start: Option<extern fn(&Slapi_R_PBlock) -> Result<(), error::PluginOperationError>>,
+    pub start: Option<fn(&Slapi_R_PBlock) -> Result<(), error::PluginOperationError>>,
     /// On option type for a function callback that handles plugin close down.
-    pub close: Option<extern fn(&Slapi_R_PBlock) -> Result<(), error::PluginOperationError>>,
+    pub close: Option<fn(&Slapi_R_PBlock) -> Result<(), error::PluginOperationError>>,
     /// An option type for a function callback that handles post search.
-    pub post_search: Option<extern fn(&Slapi_R_PBlock) -> Result<(), error::PluginOperationError>>,
+    pub post_search: Option<fn(&Slapi_R_PBlock) -> Result<(), error::PluginOperationError>>,
 }
 
 ///
@@ -70,23 +66,6 @@ pub struct Slapi_R_Plugin_Manager<'a> {
     /// The set of optional callbacks that the plugin registers.
     pub functions: Slapi_R_Plugin_FN,
 }
-
-//extern {
-//
-//    // int slapi_register_plugin( const char *plugintype, int enabled,
-//    //    const char *initsymbol, slapi_plugin_init_fnptr initfunc,
-//    //    const char *name, char **argv, void *group_identity);
-//    fn slapi_plugin_register(
-//        plugintype: *const c_char,
-//        enabled: isize,
-//        initsymbol: *const c_char,
-//        slapi_plugin_init_fnptr: *mut libc::c_void,
-//        name: *const c_char,
-//        argv: *const c_char, // This here is actually **c_char, but how to set?
-//        group_identity: *mut libc::c_void
-//        ) -> isize;
-//}
-
 
 // These are wrappers that we register on a case by case for plugins
 // The idea is to mask libslapd complexities from plugins, and give them
@@ -234,7 +213,7 @@ impl<'a> Slapi_R_Plugin_Manager<'a> {
 
     /// Completes the registration to Directory Server of the plugin. This is
     /// the *last* function you call when building a plugin in a plugin init.
-    pub fn register<T: Slapi_PBlock_V3>(self, pb: T) -> Result<(), error::PluginRegistrationError> {
+    pub fn register<T: Slapi_PBlock_Init_V3>(self, pb: T) -> Result<(), error::PluginRegistrationError> {
 
         match log::slapi_r_log_error(
             constants::LogLevel::FATAL,

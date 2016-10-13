@@ -1,3 +1,4 @@
+.PHONY: libhellorust.a hellorust.o libro_replica.a ro_replica.o
 ACLOCAL_AMFLAGS = -I m4
 
 # Extract the versions from cargo for the .so versions.

@@ -30,6 +30,7 @@ use slapi_r_plugin::plugin::Slapi_R_Plugin_Manager;
 use slapi_r_plugin::entry::Slapi_R_Entry;
 use slapi_r_plugin::plugin::Slapi_Plugin_V3;
 use slapi_r_plugin::pblock::Slapi_PBlock_V3;
+use slapi_r_plugin::pblock::Slapi_PBlock_Init_V3;
 
 /// Definition of the plugin subsystem for logging
 const SUBSYSTEM: &'static str = "plugins::hellorust";
@@ -40,26 +41,6 @@ struct HellorustPlugin {
 }
 
 impl HellorustPlugin {
-    /// A start callback, that allows the plugin to initialise and start any required
-    /// datastructures, etc.
-    extern fn start( pb: &Slapi_R_PBlock ) -> Result<(), error::PluginOperationError> {
-        match log::slapi_r_log_error(constants::LogLevel::FATAL, SUBSYSTEM, format!("Calling the hellorust start callback \n") ) {
-            Ok(_) => {},
-            Err(_) => return Err(error::PluginOperationError::LoggingError),
-        };
-        Ok(())
-    }
-
-    /// A close callback, that allows the plugin to destroy any structuse made in
-    /// the start callback
-    extern fn close( pb: &Slapi_R_PBlock ) -> Result<(), error::PluginOperationError> {
-        match log::slapi_r_log_error(constants::LogLevel::FATAL, SUBSYSTEM, format!("Calling the hellorust close callback \n") ) {
-            Ok(_) => {},
-            Err(_) => return Err(error::PluginOperationError::LoggingError),
-        };
-        Ok(())
-    }
-
     ///
     /// This is a post search operation plugin handler for the Hello Rust plugin.
     /// The post search logs a message to the error log and may in the future add
@@ -68,7 +49,7 @@ impl HellorustPlugin {
     /// You should never call this directly! It will be called by Directory Server
     /// as part of a plugin callback.
     ///
-    extern fn post_op( pb: &Slapi_R_PBlock ) -> Result<(), error::PluginOperationError> {
+    fn post_op<T: Slapi_PBlock_V3>( pb: &T ) -> Result<(), error::PluginOperationError> {
         match log::slapi_r_log_error(constants::LogLevel::FATAL, SUBSYSTEM, format!("Calling the actual rust post_op!! \n") ) {
             Ok(_) => {},
             Err(_) => return Err(error::PluginOperationError::LoggingError),
@@ -99,7 +80,7 @@ impl Slapi_Plugin_V3 for HellorustPlugin {
     /// This function will assign all the callbacks from this function into
     /// Directory Server.
     ///
-    extern fn init<T: Slapi_PBlock_V3>( pb: T ) -> Result<(), error::PluginRegistrationError> {
+    fn init<T: Slapi_PBlock_Init_V3>( pb: T ) -> Result<(), error::PluginRegistrationError> {
         match log::slapi_r_log_error(constants::LogLevel::FATAL, SUBSYSTEM, format!("Hello rust!\n")) {
             Ok(_) => {},
             Err(_) => return Err(error::PluginRegistrationError::LoggingError),
@@ -117,6 +98,27 @@ impl Slapi_Plugin_V3 for HellorustPlugin {
             Err(err) => Err(err),
         }
     }
+
+    /// A start callback, that allows the plugin to initialise and start any required
+    /// datastructures, etc.
+    fn start<T: Slapi_PBlock_V3>( pb: &T ) -> Result<(), error::PluginOperationError> {
+        match log::slapi_r_log_error(constants::LogLevel::FATAL, SUBSYSTEM, format!("Calling the hellorust start callback \n") ) {
+            Ok(_) => {},
+            Err(_) => return Err(error::PluginOperationError::LoggingError),
+        };
+        Ok(())
+    }
+
+    /// A close callback, that allows the plugin to destroy any structuse made in
+    /// the start callback
+    fn close<T: Slapi_PBlock_V3>( pb: &T ) -> Result<(), error::PluginOperationError> {
+        match log::slapi_r_log_error(constants::LogLevel::FATAL, SUBSYSTEM, format!("Calling the hellorust close callback \n") ) {
+            Ok(_) => {},
+            Err(_) => return Err(error::PluginOperationError::LoggingError),
+        };
+        Ok(())
+    }
+
 }
 
 // This is the magic that links a static no_mangle fn into the .so, and the rust

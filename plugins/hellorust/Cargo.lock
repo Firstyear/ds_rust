@@ -72,3 +72,13 @@ name = "unicode-normalization"
 version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
+[metadata]
+"checksum clippy 0.0.63 (registry+https://github.com/rust-lang/crates.io-index)" = "a0c32199dcfa0c685c37b73ae8ed46608c54439d1f91dfd77bab156d84b71060"
+"checksum libc 0.2.10 (registry+https://github.com/rust-lang/crates.io-index)" = "55f3730be7e803cf350d32061958171731c2395831fbd67a61083782808183e0"
+"checksum nom 1.2.2 (registry+https://github.com/rust-lang/crates.io-index)" = "6caab12c5f97aa316cb249725aa32115118e1522b445e26c257dd77cad5ffd4e"
+"checksum quine-mc_cluskey 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)" = "a6683b0e23d80813b1a535841f0048c1537d3f86d63c999e8373b39a9b0eb74a"
+"checksum regex-syntax 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)" = "841591b1e05609a643e3b4d0045fce04f701daba7151ddcd3ad47b080693d5a9"
+"checksum rustc-serialize 0.3.19 (registry+https://github.com/rust-lang/crates.io-index)" = "6159e4e6e559c81bd706afe9c8fd68f547d3e851ce12e76b1de7914bab61691b"
+"checksum semver 0.2.3 (registry+https://github.com/rust-lang/crates.io-index)" = "2d5b7638a1f03815d94e88cb3b3c08e87f0db4d683ef499d1836aaf70a45623f"
+"checksum toml 0.1.28 (registry+https://github.com/rust-lang/crates.io-index)" = "fcd27a04ca509aff336ba5eb2abc58d456f52c4ff64d9724d88acb85ead560b6"
+"checksum unicode-normalization 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)" = "26643a2f83bac55f1976fb716c10234485f9202dcd65cfbdf9da49867b271172"

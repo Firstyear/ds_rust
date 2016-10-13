@@ -20,8 +20,7 @@ use super::constants;
 use super::error;
 
 extern {
-    // For now we have to use slapi_log_err ...
-    fn slapi_log_err(level: isize, system: *const c_char, message: *const c_char) -> isize;
+    fn slapi_log_error(level: isize, system: *const c_char, message: *const c_char) -> isize;
 }
 
 
@@ -40,7 +39,7 @@ pub fn slapi_r_log_error(level: constants::LogLevel, subsystem: &str, message: S
     let c_subsystem = CString::new(subsystem).unwrap();
     let c_message = CString::new(message).unwrap();
     unsafe {
-        res = slapi_log_err(level as isize, c_subsystem.as_ptr(), c_message.as_ptr());
+        res = slapi_log_error(level as isize, c_subsystem.as_ptr(), c_message.as_ptr());
     }
     match res {
         constants::LDAP_SUCCESS => Ok(()),
