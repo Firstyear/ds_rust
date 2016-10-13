@@ -260,7 +260,7 @@ impl<'a> Slapi_R_Plugin_Manager<'a> {
 /// This allows complete transparency to C types to the rust plugin.
 #[macro_export]
 macro_rules! slapi_r_plugin_init {
-    ( $func:expr ) => (
+    ( $plugin_type:ident ) => (
         extern crate libc;
         use slapi_r_plugin::pblock::Slapi_R_PBlock;
         /// A static C function exported from the .so that Directory Server can
@@ -268,7 +268,7 @@ macro_rules! slapi_r_plugin_init {
         #[no_mangle]
         pub extern fn slapi_r_plugin_init_fn(slapi_pblock: *mut libc::c_void) -> isize {
             let pb: Slapi_R_PBlock = Slapi_R_PBlock::build(slapi_pblock);
-            match $func(pb) {
+            match <$plugin_type as Slapi_Plugin_V3>::init(pb) {
                 Ok(_) => constants::LDAP_SUCCESS,
                 Err(e) => return e.as_ds_isize(),
             }

@@ -123,5 +123,5 @@ impl Slapi_Plugin_V3 for HellorustPlugin {
 
 // This is the magic that links a static no_mangle fn into the .so, and the rust
 // init types
-slapi_r_plugin_init!(HellorustPlugin::init);
+slapi_r_plugin_init!(HellorustPlugin);
 

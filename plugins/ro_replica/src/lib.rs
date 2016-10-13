@@ -87,7 +87,7 @@ impl Slapi_Plugin_V3 for RoReplicaPlugin {
 
 // This is the magic that links a static no_mangle fn into the .so, and the rust
 // init types
-slapi_r_plugin_init!(RoReplicaPlugin::init);
+slapi_r_plugin_init!(RoReplicaPlugin);
 
 
 #[cfg(test)]
