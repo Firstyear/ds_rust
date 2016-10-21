@@ -92,15 +92,6 @@ pub struct Slapi_R_Plugin_Manager<'a> {
 /// structures that it may require.
 extern fn slapi_r_plugin_start_cb(slapi_pblock: *const libc::c_void) -> isize {
     let pb: Slapi_R_PBlock = Slapi_R_PBlock::build(slapi_pblock);
-    match slapi_r_log_error(
-        LogLevel::FATAL,
-        SUBSYSTEM,
-        format!("Starting rust plugin \n")
-    ) {
-        Ok(_) => {},
-        // This type has to be error::LoggingError, so just catch all and return
-        Err(_) => return PluginOperationError::LoggingError.as_ds_isize(),
-    };
 
     // First check if the plugin actually has any call backs to call on start
     let result_f = if !pb.get_plugin_private::<Slapi_R_Plugin_FN>().is_none() {
@@ -125,16 +116,6 @@ extern fn slapi_r_plugin_start_cb(slapi_pblock: *const libc::c_void) -> isize {
 /// private data, and allows the plugin itself to close down.
 extern fn slapi_r_plugin_close_cb(slapi_pblock: *const libc::c_void) -> isize {
     let pb: Slapi_R_PBlock = Slapi_R_PBlock::build(slapi_pblock);
-    //let result = constants::LDAP_SUCCESS;
-    match slapi_r_log_error(
-        LogLevel::FATAL,
-        SUBSYSTEM,
-        format!("Closing rust plugin \n")
-    ) {
-        Ok(_) => {},
-        // This type has to be error::LoggingError, so just catch all and return
-        Err(_) => return PluginOperationError::LoggingError.as_ds_isize(),
-    };
 
     // First check if the plugin actually has any call backs to call on close
     let result_f = if !pb.get_plugin_private::<Slapi_R_Plugin_FN>().is_none() {
@@ -173,16 +154,6 @@ extern fn slapi_r_plugin_close_cb(slapi_pblock: *const libc::c_void) -> isize {
 ///
 extern fn slapi_r_plugin_post_search_cb(slapi_pblock: *const libc::c_void) -> isize {
     let pb: Slapi_R_PBlock = Slapi_R_PBlock::build(slapi_pblock);
-    // Log that we found a search!
-    match slapi_r_log_error(
-        LogLevel::DEBUG,
-        SUBSYSTEM,
-        format!("Rust is handling a post_search operation \n")
-    ) {
-        Ok(_) => {},
-        // This type has to be error::LoggingError, so just catch all and return
-        Err(_) => return PluginOperationError::LoggingError.as_ds_isize(),
-    };
 
     // Get the plugin private data we have registered to us.
     if pb.get_plugin_private::<Slapi_R_Plugin_FN>().is_none() {
@@ -196,7 +167,6 @@ extern fn slapi_r_plugin_post_search_cb(slapi_pblock: *const libc::c_void) -> is
     };
 
     // Call it
-    // Is there a way to validate func?
     let result: Result<(), PluginOperationError> = func(&pb);
 
     // Unwrap the result, and give it to DS in a way it can understand.
