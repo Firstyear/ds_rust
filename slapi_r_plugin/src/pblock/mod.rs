@@ -39,6 +39,8 @@ pub trait Slapi_PBlock_Init_V3 {
     fn set_plugin_start_fn(&self, func: extern fn(*const libc::c_void) -> isize);
     /// Set the plugin's post search function handler. This is used by init the macros
     fn set_plugin_post_search_fn(&self, func: extern fn(*const libc::c_void) -> isize);
+    /// Set the plugin's pre bind function handler. This is used by init the macros
+    fn set_plugin_pre_bind_fn(&self, func: extern fn(*const libc::c_void) -> isize);
     /// Set the private data into the plugin.
     fn get_plugin_private<T>(&self) -> Option<&T>;
     /// Get the private data from the plugin.
@@ -239,6 +241,13 @@ impl Slapi_PBlock_Init_V3 for Slapi_R_PBlock {
     /// as the Slapi_R_Plugin_Manager will handle this for you.
     fn set_plugin_post_search_fn(&self, func: extern fn(*const libc::c_void) -> isize) {
         self._set_pb_fn_ptr(SLAPI_PLUGIN_POST_SEARCH_FN, func)
+    }
+
+    /// This will set the pre bind operation plugin callback handler as
+    /// SLAPI_PLUGIN_PRE_BIND_FN. You should *not* call this directly
+    /// as the Slapi_R_Plugin_Manager will handle this for you.
+    fn set_plugin_pre_bind_fn(&self, func: extern fn(*const libc::c_void) -> isize) {
+        self._set_pb_fn_ptr(SLAPI_PLUGIN_PRE_BIND_FN, func)
     }
 
     /// This will get a pointer to a structure stored in the plugin private data

@@ -16,8 +16,10 @@
 use std::ffi::CString;
 use std::os::raw::c_char;
 
+use super::error::LoggingError;
 use super::constants;
-use super::error;
+use super::constants::LogLevel;
+
 
 extern {
     fn slapi_log_error(level: isize, system: *const c_char, message: *const c_char) -> isize;
@@ -34,7 +36,7 @@ extern {
 /// plugin or operation, ie PluginOperationError::LoggingError. This way the
 /// error is transmitted correctly.
 ///
-pub fn slapi_r_log_error(level: constants::LogLevel, subsystem: &str, message: String) -> Result<(), error::LoggingError> {
+pub fn slapi_r_log_error(level: LogLevel, subsystem: &str, message: String) -> Result<(), LoggingError> {
     let res: isize;
     let c_subsystem = CString::new(subsystem).unwrap();
     let c_message = CString::new(message).unwrap();
@@ -44,7 +46,33 @@ pub fn slapi_r_log_error(level: constants::LogLevel, subsystem: &str, message: S
     match res {
         constants::LDAP_SUCCESS => Ok(()),
         // Ds logging error codes here are a bit meaningless right now
-        _ => Err(error::LoggingError::Unknown),
+        _ => Err(LoggingError::Unknown),
     }
+}
+
+/// This macro wraps and discards the result of a slapi_r_log_error call. It's good for
+/// quick development, but you probably want the checked version that will return a
+/// plugin error.
+#[macro_export]
+macro_rules! slapi_r_log_error_unchecked {
+    ( $level:ident, $subsystem:ident, $message:ident ) => (
+        match slapi_r_log_error($level, $subsystem, $message) {
+            Ok(_) => {},
+            Err(_) => {},
+        };
+    );
+}
+
+/// This macro is for plugins which return a PluginOperationError.
+/// If the logging fails, we immedately return the error and the plugin stops
+/// processing as this is a bad server state!
+#[macro_export]
+macro_rules! slapi_r_log_error_plugin {
+    ( $level:expr, $subsystem:expr, $message:expr ) => (
+        match slapi_r_log_error($level, $subsystem, $message) {
+            Ok(_) => {},
+            Err(_) => return Err(PluginOperationError::LoggingError),
+        };
+    );
 }
 

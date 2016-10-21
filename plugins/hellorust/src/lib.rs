@@ -23,11 +23,13 @@
 #[macro_use]
 extern crate slapi_r_plugin;
 
-use slapi_r_plugin::log;
-use slapi_r_plugin::error;
 use slapi_r_plugin::constants;
-use slapi_r_plugin::plugin::Slapi_R_Plugin_Manager;
+use slapi_r_plugin::constants::LogLevel;
 use slapi_r_plugin::entry::Slapi_R_Entry;
+use slapi_r_plugin::error::PluginOperationError;
+use slapi_r_plugin::error::PluginRegistrationError;
+use slapi_r_plugin::log::slapi_r_log_error;
+use slapi_r_plugin::plugin::Slapi_R_Plugin_Manager;
 use slapi_r_plugin::plugin::Slapi_Plugin_V3;
 use slapi_r_plugin::pblock::Slapi_PBlock_V3;
 use slapi_r_plugin::pblock::Slapi_PBlock_Init_V3;
@@ -35,10 +37,7 @@ use slapi_r_plugin::pblock::Slapi_PBlock_Init_V3;
 /// Definition of the plugin subsystem for logging
 const SUBSYSTEM: &'static str = "plugins::hellorust";
 
-struct HellorustPlugin {
-    // Is there a way to make this without a field here?
-    x: isize,
-}
+struct HellorustPlugin {}
 
 impl HellorustPlugin {
     ///
@@ -49,22 +48,15 @@ impl HellorustPlugin {
     /// You should never call this directly! It will be called by Directory Server
     /// as part of a plugin callback.
     ///
-    fn post_op<T: Slapi_PBlock_V3>( pb: &T ) -> Result<(), error::PluginOperationError> {
-        match log::slapi_r_log_error(constants::LogLevel::FATAL, SUBSYSTEM, format!("Calling the actual rust post_op!! \n") ) {
-            Ok(_) => {},
-            Err(_) => return Err(error::PluginOperationError::LoggingError),
-        };
+    fn post_op<T: Slapi_PBlock_V3>( pb: &T ) -> Result<(), PluginOperationError> {
+
+        slapi_r_log_error_plugin!(LogLevel::FATAL, SUBSYSTEM, format!("Calling the actual rust post_op!! \n"));
 
         // Check if internal operation
 
         // Get the search results
         match pb.get_search_result_entry() {
-            Some(e) => match log::slapi_r_log_error(constants::LogLevel::FATAL, SUBSYSTEM, 
-                        format!("Retrieved entry {:?} \n", e) )
-                {
-                    Ok(_) => {},
-                    Err(_) => return Err(error::PluginOperationError::LoggingError),
-                },
+            Some(e) => slapi_r_log_error_plugin!(LogLevel::FATAL, SUBSYSTEM, format!("Retrieved entry {:?} \n", e)),
             None => {},
         };
         // Display them? 
@@ -80,10 +72,11 @@ impl Slapi_Plugin_V3 for HellorustPlugin {
     /// This function will assign all the callbacks from this function into
     /// Directory Server.
     ///
-    fn init<T: Slapi_PBlock_Init_V3>( pb: T ) -> Result<(), error::PluginRegistrationError> {
-        match log::slapi_r_log_error(constants::LogLevel::FATAL, SUBSYSTEM, format!("Hello rust!\n")) {
+    fn init<T: Slapi_PBlock_Init_V3>( pb: T ) -> Result<(), PluginRegistrationError> {
+        // need to do something better here ...
+        match slapi_r_log_error(LogLevel::FATAL, SUBSYSTEM, format!("Hello rust!\n")) {
             Ok(_) => {},
-            Err(_) => return Err(error::PluginRegistrationError::LoggingError),
+            Err(_) => return Err(PluginRegistrationError::LoggingError),
         };
 
         // Build the R_Plugin_Manager. It will do the magic for us.
@@ -101,21 +94,15 @@ impl Slapi_Plugin_V3 for HellorustPlugin {
 
     /// A start callback, that allows the plugin to initialise and start any required
     /// datastructures, etc.
-    fn start<T: Slapi_PBlock_V3>( pb: &T ) -> Result<(), error::PluginOperationError> {
-        match log::slapi_r_log_error(constants::LogLevel::FATAL, SUBSYSTEM, format!("Calling the hellorust start callback \n") ) {
-            Ok(_) => {},
-            Err(_) => return Err(error::PluginOperationError::LoggingError),
-        };
+    fn start<T: Slapi_PBlock_V3>( pb: &T ) -> Result<(), PluginOperationError> {
+        slapi_r_log_error_plugin!(LogLevel::FATAL, SUBSYSTEM, format!("Calling the hellorust start callback \n") );
         Ok(())
     }
 
     /// A close callback, that allows the plugin to destroy any structuse made in
     /// the start callback
-    fn close<T: Slapi_PBlock_V3>( pb: &T ) -> Result<(), error::PluginOperationError> {
-        match log::slapi_r_log_error(constants::LogLevel::FATAL, SUBSYSTEM, format!("Calling the hellorust close callback \n") ) {
-            Ok(_) => {},
-            Err(_) => return Err(error::PluginOperationError::LoggingError),
-        };
+    fn close<T: Slapi_PBlock_V3>( pb: &T ) -> Result<(), PluginOperationError> {
+        slapi_r_log_error_plugin!(LogLevel::FATAL, SUBSYSTEM, format!("Calling the hellorust close callback \n") );
         Ok(())
     }
 

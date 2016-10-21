@@ -14,8 +14,10 @@
 
 use libc;
 
-use super::log;
-use super::error;
+use super::log::slapi_r_log_error;
+use super::error::PluginOperationError;
+use super::error::PluginRegistrationError;
+use super::constants::LogLevel;
 use super::constants;
 use super::pblock::Slapi_R_PBlock;
 use super::pblock::Slapi_PBlock_V3;
@@ -28,13 +30,13 @@ const SUBSYSTEM: &'static str = "slapi_r_plugin::plugin::mod";
 #[allow(non_camel_case_types)]
 pub trait Slapi_Plugin_V3 {
     /// The function that initialises the plugin. May do internal or other initilasation
-    fn init<T: Slapi_PBlock_Init_V3>( pb: T ) -> Result<(), error::PluginRegistrationError>;
+    fn init<T: Slapi_PBlock_Init_V3>( pb: T ) -> Result<(), PluginRegistrationError>;
     /// The function that starts plugin operations. After this point, the other callbacks
     /// may be triggered
-    fn start<T: Slapi_PBlock_V3>( pb: &T ) -> Result<(), error::PluginOperationError>;
+    fn start<T: Slapi_PBlock_V3>( pb: &T ) -> Result<(), PluginOperationError>;
     /// The function that stops and cleans up plugin operation. After this is called, no
     /// other callbacks will be called on the plugin.
-    fn close<T: Slapi_PBlock_V3>( pb: &T ) -> Result<(), error::PluginOperationError>;
+    fn close<T: Slapi_PBlock_V3>( pb: &T ) -> Result<(), PluginOperationError>;
 }
 
 ///
@@ -45,12 +47,24 @@ pub trait Slapi_Plugin_V3 {
 ///
 #[allow(non_camel_case_types)]
 pub struct Slapi_R_Plugin_FN {
-    /// On option type for a function callback that handles plugin start up.
-    pub start: Option<fn(&Slapi_R_PBlock) -> Result<(), error::PluginOperationError>>,
-    /// On option type for a function callback that handles plugin close down.
-    pub close: Option<fn(&Slapi_R_PBlock) -> Result<(), error::PluginOperationError>>,
+    /// An option type for a function callback that handles plugin start up.
+    pub start: Option<fn(&Slapi_R_PBlock) -> Result<(), PluginOperationError>>,
+    /// An option type for a function callback that handles plugin close down.
+    pub close: Option<fn(&Slapi_R_PBlock) -> Result<(), PluginOperationError>>,
     /// An option type for a function callback that handles post search.
-    pub post_search: Option<fn(&Slapi_R_PBlock) -> Result<(), error::PluginOperationError>>,
+    pub post_search: Option<fn(&Slapi_R_PBlock) -> Result<(), PluginOperationError>>,
+    /// An option type for a function callback that handles pre bind
+    pub pre_bind: Option<fn(&Slapi_R_PBlock) -> Result<(), PluginOperationError>>,
+    /// An option type for a function callback that handles pre search.
+    pub pre_search: Option<fn(&Slapi_R_PBlock) -> Result<(), PluginOperationError>>,
+    /// An option type for a function callback that handles pre modify.
+    pub pre_modify: Option<fn(&Slapi_R_PBlock) -> Result<(), PluginOperationError>>,
+    /// An option type for a function callback that handles pre modrdn.
+    pub pre_modrdn: Option<fn(&Slapi_R_PBlock) -> Result<(), PluginOperationError>>,
+    /// An option type for a function callback that handles pre add.
+    pub pre_add: Option<fn(&Slapi_R_PBlock) -> Result<(), PluginOperationError>>,
+    /// An option type for a function callback that handles pre delete.
+    pub pre_delete: Option<fn(&Slapi_R_PBlock) -> Result<(), PluginOperationError>>,
 }
 
 ///
@@ -78,14 +92,14 @@ pub struct Slapi_R_Plugin_Manager<'a> {
 /// structures that it may require.
 extern fn slapi_r_plugin_start_cb(slapi_pblock: *const libc::c_void) -> isize {
     let pb: Slapi_R_PBlock = Slapi_R_PBlock::build(slapi_pblock);
-    match log::slapi_r_log_error(
-        constants::LogLevel::FATAL,
+    match slapi_r_log_error(
+        LogLevel::FATAL,
         SUBSYSTEM,
         format!("Starting rust plugin \n")
     ) {
         Ok(_) => {},
         // This type has to be error::LoggingError, so just catch all and return
-        Err(_) => return error::PluginOperationError::LoggingError.as_ds_isize(),
+        Err(_) => return PluginOperationError::LoggingError.as_ds_isize(),
     };
 
     // First check if the plugin actually has any call backs to call on start
@@ -94,7 +108,7 @@ extern fn slapi_r_plugin_start_cb(slapi_pblock: *const libc::c_void) -> isize {
 
         match fn_ptrs.start {
             Some(f) => f(&pb),
-            None => Err(error::PluginOperationError::Unknown),
+            None => Err(PluginOperationError::Unknown),
         }
     } else {
         Ok(())
@@ -112,14 +126,14 @@ extern fn slapi_r_plugin_start_cb(slapi_pblock: *const libc::c_void) -> isize {
 extern fn slapi_r_plugin_close_cb(slapi_pblock: *const libc::c_void) -> isize {
     let pb: Slapi_R_PBlock = Slapi_R_PBlock::build(slapi_pblock);
     //let result = constants::LDAP_SUCCESS;
-    match log::slapi_r_log_error(
-        constants::LogLevel::FATAL,
+    match slapi_r_log_error(
+        LogLevel::FATAL,
         SUBSYSTEM,
         format!("Closing rust plugin \n")
     ) {
         Ok(_) => {},
         // This type has to be error::LoggingError, so just catch all and return
-        Err(_) => return error::PluginOperationError::LoggingError.as_ds_isize(),
+        Err(_) => return PluginOperationError::LoggingError.as_ds_isize(),
     };
 
     // First check if the plugin actually has any call backs to call on close
@@ -129,7 +143,7 @@ extern fn slapi_r_plugin_close_cb(slapi_pblock: *const libc::c_void) -> isize {
         // TODO: Rewrite the other function callers in post search to use this
         match fn_ptrs.close {
             Some(f) => f(&pb),
-            None => Err(error::PluginOperationError::Unknown),
+            None => Err(PluginOperationError::Unknown),
         }
     } else {
         Ok(())
@@ -160,36 +174,41 @@ extern fn slapi_r_plugin_close_cb(slapi_pblock: *const libc::c_void) -> isize {
 extern fn slapi_r_plugin_post_search_cb(slapi_pblock: *const libc::c_void) -> isize {
     let pb: Slapi_R_PBlock = Slapi_R_PBlock::build(slapi_pblock);
     // Log that we found a search!
-    match log::slapi_r_log_error(
-        constants::LogLevel::FATAL,
+    match slapi_r_log_error(
+        LogLevel::DEBUG,
         SUBSYSTEM,
         format!("Rust is handling a post_search operation \n")
     ) {
         Ok(_) => {},
         // This type has to be error::LoggingError, so just catch all and return
-        Err(_) => return error::PluginOperationError::LoggingError.as_ds_isize(),
+        Err(_) => return PluginOperationError::LoggingError.as_ds_isize(),
     };
 
     // Get the plugin private data we have registered to us.
     if pb.get_plugin_private::<Slapi_R_Plugin_FN>().is_none() {
-        return error::PluginOperationError::Unknown.as_ds_isize()
+        return PluginOperationError::Unknown.as_ds_isize()
     }
     let fn_ptrs: &Slapi_R_Plugin_FN = pb.get_plugin_private().unwrap();
 
     let func = match fn_ptrs.post_search {
         Some(f) => f,
-        None => return error::PluginOperationError::Unknown.as_ds_isize(),
+        None => return PluginOperationError::Unknown.as_ds_isize(),
     };
 
     // Call it
     // Is there a way to validate func?
-    let result: Result<(), error::PluginOperationError> = func(&pb);
+    let result: Result<(), PluginOperationError> = func(&pb);
 
     // Unwrap the result, and give it to DS in a way it can understand.
     match result {
         Ok(_) => constants::LDAP_SUCCESS,
         Err(err) => err.as_ds_isize(),
     }
+}
+
+/// This is a placeholder for the pre_bind cb
+extern fn slapi_r_plugin_pre_bind_cb(slapi_pblock: *const libc::c_void) -> isize {
+    constants::LDAP_SUCCESS
 }
 
 impl<'a> Slapi_R_Plugin_Manager<'a> {
@@ -202,6 +221,12 @@ impl<'a> Slapi_R_Plugin_Manager<'a> {
             start: None,
             close: None,
             post_search: None,
+            pre_bind: None,
+            pre_search: None,
+            pre_modify: None,
+            pre_modrdn: None,
+            pre_add: None,
+            pre_delete: None,
         };
 
         Slapi_R_Plugin_Manager {
@@ -213,15 +238,15 @@ impl<'a> Slapi_R_Plugin_Manager<'a> {
 
     /// Completes the registration to Directory Server of the plugin. This is
     /// the *last* function you call when building a plugin in a plugin init.
-    pub fn register<T: Slapi_PBlock_Init_V3>(self, pb: T) -> Result<(), error::PluginRegistrationError> {
+    pub fn register<T: Slapi_PBlock_Init_V3>(self, pb: T) -> Result<(), PluginRegistrationError> {
 
-        match log::slapi_r_log_error(
-            constants::LogLevel::FATAL,
+        match slapi_r_log_error(
+            LogLevel::FATAL,
             SUBSYSTEM,
             format!("Registering a rust plugin wrapper\n")
         ) {
             Ok(_) => {},
-            Err(_) => return Err(error::PluginRegistrationError::LoggingError),
+            Err(_) => return Err(PluginRegistrationError::LoggingError),
         };
 
         // Set the plugin api version
@@ -230,9 +255,12 @@ impl<'a> Slapi_R_Plugin_Manager<'a> {
         // Set description:
         // I think this is optional ...
 
-        match self.functions.post_search {
-            Some(_) => pb.set_plugin_post_search_fn(slapi_r_plugin_post_search_cb),
-            None => {}
+        if self.functions.post_search.is_some() {
+            pb.set_plugin_post_search_fn(slapi_r_plugin_post_search_cb)
+        }
+
+        if self.functions.pre_bind.is_some() {
+            pb.set_plugin_pre_bind_fn(slapi_r_plugin_pre_bind_cb)
         }
 
         // We always register the start and close functions: We have some
