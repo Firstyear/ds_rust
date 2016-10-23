@@ -86,34 +86,55 @@ pub struct Slapi_R_Plugin_Manager<'a> {
 // A pure rust api view.
 
 
+/// This is the internals of how most of the callbacks works. We extract the
+/// function pointers, and execute the named pointer from cb_name. It wraps
+/// the raw C types, uses the plg_private data to access our rust function
+/// pointers, then we dispatch the call to the rust plugin. We then unwrap the
+/// plugin result, translate it to an int that Directory Server can understand
+/// and returns it.
+///
+/// This allows us to mask complexities of Directory Server interaction from
+/// pure rust plugins, and gives us an avenue of abstraction to create changes
+/// and rewrites in the future.
+macro_rules! plugin_execute_fn_cb {
+    ($cb_name:ident, $slapi_pblock:ident) => {{
+        let pb: Slapi_R_PBlock = Slapi_R_PBlock::build($slapi_pblock);
+
+        // Get the plugin private data we have registered to us.
+        if pb.get_plugin_private::<Slapi_R_Plugin_FN>().is_none() {
+            return PluginOperationError::Unknown.as_ds_isize()
+        }
+
+        let fn_ptrs: &Slapi_R_Plugin_FN = pb.get_plugin_private().unwrap();
+
+        let func = match fn_ptrs.$cb_name {
+            Some(f) => f,
+            None => return PluginOperationError::Unknown.as_ds_isize(),
+        };
+
+        let result: Result<(), PluginOperationError> = func(&pb);
+        // Unwrap the result, and give it to DS in a way it can understand.
+        match result {
+            Ok(_) => constants::LDAP_SUCCESS,
+            Err(err) => err.as_ds_isize(),
+        }
+    }};
+}
+
+
 /// A callback wrapper for starting the plugin. This allows the
 /// slapi_r_plugin_manager to start it's own internals, as well
 /// as allowing the plugin itself to start up and setup any data
 /// structures that it may require.
 extern fn slapi_r_plugin_start_cb(slapi_pblock: *const libc::c_void) -> isize {
-    let pb: Slapi_R_PBlock = Slapi_R_PBlock::build(slapi_pblock);
-
-    // First check if the plugin actually has any call backs to call on start
-    let result_f = if !pb.get_plugin_private::<Slapi_R_Plugin_FN>().is_none() {
-        let fn_ptrs: &Slapi_R_Plugin_FN = pb.get_plugin_private().unwrap();
-
-        match fn_ptrs.start {
-            Some(f) => f(&pb),
-            None => Err(PluginOperationError::Unknown),
-        }
-    } else {
-        Ok(())
-    };
-
-    match result_f {
-        Ok(_) => constants::LDAP_SUCCESS,
-        Err(e) => e.as_ds_isize(),
-    }
+    plugin_execute_fn_cb!(start, slapi_pblock)
 }
 
 /// A callback wrapper for stopping the plugin. This allows the
 /// slapi_r_plugin_manager to free structures, such as the plugin
 /// private data, and allows the plugin itself to close down.
+/// This does *not* use the plugin_execute_fn_cb as it requires access to
+/// destroy the plugin private data which the macro obscures.
 extern fn slapi_r_plugin_close_cb(slapi_pblock: *const libc::c_void) -> isize {
     let pb: Slapi_R_PBlock = Slapi_R_PBlock::build(slapi_pblock);
 
@@ -140,45 +161,14 @@ extern fn slapi_r_plugin_close_cb(slapi_pblock: *const libc::c_void) -> isize {
     }
 }
 
-///
-/// This is our proxy wrapper for directory server. This is the actual function
-/// that is registered for a plugin to the POST_SEARCH_FN callback. It wraps
-/// the raw C types, uses the plg_private data to access our rust function
-/// pointers, then we dispatch the call to the rust plugin. We then unwrap the
-/// plugin result, translate it to an int that Directory Server can understand
-/// and returns it.
-///
-/// This allows us to mask complexities of Directory Server interaction from
-/// pure rust plugins, and gives us an avenue of abstraction to create changes
-/// and rewrites in the future.
-///
+/// The callback wrapper for post_search
 extern fn slapi_r_plugin_post_search_cb(slapi_pblock: *const libc::c_void) -> isize {
-    let pb: Slapi_R_PBlock = Slapi_R_PBlock::build(slapi_pblock);
-
-    // Get the plugin private data we have registered to us.
-    if pb.get_plugin_private::<Slapi_R_Plugin_FN>().is_none() {
-        return PluginOperationError::Unknown.as_ds_isize()
-    }
-    let fn_ptrs: &Slapi_R_Plugin_FN = pb.get_plugin_private().unwrap();
-
-    let func = match fn_ptrs.post_search {
-        Some(f) => f,
-        None => return PluginOperationError::Unknown.as_ds_isize(),
-    };
-
-    // Call it
-    let result: Result<(), PluginOperationError> = func(&pb);
-
-    // Unwrap the result, and give it to DS in a way it can understand.
-    match result {
-        Ok(_) => constants::LDAP_SUCCESS,
-        Err(err) => err.as_ds_isize(),
-    }
+    plugin_execute_fn_cb!(post_search, slapi_pblock)
 }
 
-/// This is a placeholder for the pre_bind cb
+/// The callback wrapper for pre_bind.
 extern fn slapi_r_plugin_pre_bind_cb(slapi_pblock: *const libc::c_void) -> isize {
-    constants::LDAP_SUCCESS
+    plugin_execute_fn_cb!(pre_bind, slapi_pblock)
 }
 
 impl<'a> Slapi_R_Plugin_Manager<'a> {
