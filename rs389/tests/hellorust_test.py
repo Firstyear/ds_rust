@@ -12,6 +12,7 @@
 
 DEBUGGING = True
 
+import ldap
 from . import topology
 
 from rs389 import HellorustPlugin
@@ -28,5 +29,12 @@ def test_setup_ds_minimal(topology):
     topology.standalone.stop()
     topology.standalone.start()
     assert(len(topology.standalone.ds_error_log.match('.*Hello rust\!.*')) > 0)
+
+    # Flush the log, and do a search. we should see a few operations.
+    topology.standalone.search_s('', ldap.SCOPE_BASE)
+    assert(len(topology.standalone.ds_error_log.match('.*start callback.*')) > 0)
+    assert(len(topology.standalone.ds_error_log.match('.*pre_search*')) > 0)
+    assert(len(topology.standalone.ds_error_log.match('.*pre_entry.*')) > 0)
+    assert(len(topology.standalone.ds_error_log.match('.*pre_result.*')) > 0)
 
 

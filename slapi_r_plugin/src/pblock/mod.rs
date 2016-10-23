@@ -41,6 +41,30 @@ pub trait Slapi_PBlock_Init_V3 {
     fn set_plugin_post_search_fn(&self, func: extern fn(*const libc::c_void) -> isize);
     /// Set the plugin's pre bind function handler. This is used by init the macros
     fn set_plugin_pre_bind_fn(&self, func: extern fn(*const libc::c_void) -> isize);
+    /// Set the plugin's pre_unbind function handler. This is used by init the macros
+    fn set_plugin_pre_unbind_fn(&self, func: extern fn(*const libc::c_void) -> isize);
+    /// Set the plugin's pre_search function handler. This is used by init the macros
+    fn set_plugin_pre_search_fn(&self, func: extern fn(*const libc::c_void) -> isize);
+    /// Set the plugin's pre_compare function handler. This is used by init the macros
+    fn set_plugin_pre_compare_fn(&self, func: extern fn(*const libc::c_void) -> isize);
+    /// Set the plugin's pre_modrdn function handler. This is used by init the macros
+    fn set_plugin_pre_modrdn_fn(&self, func: extern fn(*const libc::c_void) -> isize);
+    /// Set the plugin's pre_modify function handler. This is used by init the macros
+    fn set_plugin_pre_modify_fn(&self, func: extern fn(*const libc::c_void) -> isize);
+    /// Set the plugin's pre_add function handler. This is used by init the macros
+    fn set_plugin_pre_add_fn(&self, func: extern fn(*const libc::c_void) -> isize);
+    /// Set the plugin's pre_delete function handler. This is used by init the macros
+    fn set_plugin_pre_delete_fn(&self, func: extern fn(*const libc::c_void) -> isize);
+    /// Set the plugin's pre_abandon function handler. This is used by init the macros
+    fn set_plugin_pre_abandon_fn(&self, func: extern fn(*const libc::c_void) -> isize);
+    /// Set the plugin's pre_entry function handler. This is used by init the macros
+    fn set_plugin_pre_entry_fn(&self, func: extern fn(*const libc::c_void) -> isize);
+    /// Set the plugin's pre_referal function handler. This is used by init the macros
+    fn set_plugin_pre_referal_fn(&self, func: extern fn(*const libc::c_void) -> isize);
+    /// Set the plugin's pre_result function handler. This is used by init the macros
+    fn set_plugin_pre_result_fn(&self, func: extern fn(*const libc::c_void) -> isize);
+    /// Set the plugin's pre_extop function handler. This is used by init the macros
+    fn set_plugin_pre_extop_fn(&self, func: extern fn(*const libc::c_void) -> isize);
     /// Set the private data into the plugin.
     fn get_plugin_private<T>(&self) -> Option<&T>;
     /// Get the private data from the plugin.
@@ -248,6 +272,90 @@ impl Slapi_PBlock_Init_V3 for Slapi_R_PBlock {
     /// as the Slapi_R_Plugin_Manager will handle this for you.
     fn set_plugin_pre_bind_fn(&self, func: extern fn(*const libc::c_void) -> isize) {
         self._set_pb_fn_ptr(SLAPI_PLUGIN_PRE_BIND_FN, func)
+    }
+
+    /// This will set the pre_unbind operation plugin callback handler as
+    /// SLAPI_PLUGIN_PRE_UNBIND_FN. You should *not* call this directly
+    /// as the Slapi_R_Plugin_Manager will handle this for you.
+    fn set_plugin_pre_unbind_fn(&self, func: extern fn(*const libc::c_void) -> isize) {
+        self._set_pb_fn_ptr(SLAPI_PLUGIN_PRE_UNBIND_FN, func)
+    }
+
+    /// This will set the pre_search operation plugin callback handler as
+    /// SLAPI_PLUGIN_PRE_search_FN. You should *not* call this directly
+    /// as the Slapi_R_Plugin_Manager will handle this for you.
+    fn set_plugin_pre_search_fn(&self, func: extern fn(*const libc::c_void) -> isize) {
+        self._set_pb_fn_ptr(SLAPI_PLUGIN_PRE_SEARCH_FN, func)
+    }
+
+    /// This will set the pre_compare operation plugin callback handler as
+    /// SLAPI_PLUGIN_PRE_COMPARE_FN. You should *not* call this directly
+    /// as the Slapi_R_Plugin_Manager will handle this for you.
+    fn set_plugin_pre_compare_fn(&self, func: extern fn(*const libc::c_void) -> isize) {
+        self._set_pb_fn_ptr(SLAPI_PLUGIN_PRE_COMPARE_FN, func)
+    }
+
+    /// This will set the pre_modify operation plugin callback handler as
+    /// SLAPI_PLUGIN_PRE_modify_FN. You should *not* call this directly
+    /// as the Slapi_R_Plugin_Manager will handle this for you.
+    fn set_plugin_pre_modify_fn(&self, func: extern fn(*const libc::c_void) -> isize) {
+        self._set_pb_fn_ptr(SLAPI_PLUGIN_PRE_MODIFY_FN, func)
+    }
+
+    /// This will set the pre_modrdn operation plugin callback handler as
+    /// SLAPI_PLUGIN_PRE_MODRDN_FN. You should *not* call this directly
+    /// as the Slapi_R_Plugin_Manager will handle this for you.
+    fn set_plugin_pre_modrdn_fn(&self, func: extern fn(*const libc::c_void) -> isize) {
+        self._set_pb_fn_ptr(SLAPI_PLUGIN_PRE_MODRDN_FN, func)
+    }
+
+    /// This will set the pre_add operation plugin callback handler as
+    /// SLAPI_PLUGIN_PRE_ADD_FN. You should *not* call this directly
+    /// as the Slapi_R_Plugin_Manager will handle this for you.
+    fn set_plugin_pre_add_fn(&self, func: extern fn(*const libc::c_void) -> isize) {
+        self._set_pb_fn_ptr(SLAPI_PLUGIN_PRE_ADD_FN, func)
+    }
+
+    /// This will set the pre_delete operation plugin callback handler as
+    /// SLAPI_PLUGIN_PRE_DELETE_FN. You should *not* call this directly
+    /// as the Slapi_R_Plugin_Manager will handle this for you.
+    fn set_plugin_pre_delete_fn(&self, func: extern fn(*const libc::c_void) -> isize) {
+        self._set_pb_fn_ptr(SLAPI_PLUGIN_PRE_DELETE_FN, func)
+    }
+
+    /// This will set the pre_abandon operation plugin callback handler as
+    /// SLAPI_PLUGIN_PRE_ABANDON_FN. You should *not* call this directly
+    /// as the Slapi_R_Plugin_Manager will handle this for you.
+    fn set_plugin_pre_abandon_fn(&self, func: extern fn(*const libc::c_void) -> isize) {
+        self._set_pb_fn_ptr(SLAPI_PLUGIN_PRE_ABANDON_FN, func)
+    }
+
+    /// This will set the pre_entry operation plugin callback handler as
+    /// SLAPI_PLUGIN_PRE_ENTRY_FN. You should *not* call this directly
+    /// as the Slapi_R_Plugin_Manager will handle this for you.
+    fn set_plugin_pre_entry_fn(&self, func: extern fn(*const libc::c_void) -> isize) {
+        self._set_pb_fn_ptr(SLAPI_PLUGIN_PRE_ENTRY_FN, func)
+    }
+
+    /// This will set the pre_referal operation plugin callback handler as
+    /// SLAPI_PLUGIN_PRE_REFERAL_FN. You should *not* call this directly
+    /// as the Slapi_R_Plugin_Manager will handle this for you.
+    fn set_plugin_pre_referal_fn(&self, func: extern fn(*const libc::c_void) -> isize) {
+        self._set_pb_fn_ptr(SLAPI_PLUGIN_PRE_REFERAL_FN, func)
+    }
+
+    /// This will set the pre_result operation plugin callback handler as
+    /// SLAPI_PLUGIN_PRE_RESULT_FN. You should *not* call this directly
+    /// as the Slapi_R_Plugin_Manager will handle this for you.
+    fn set_plugin_pre_result_fn(&self, func: extern fn(*const libc::c_void) -> isize) {
+        self._set_pb_fn_ptr(SLAPI_PLUGIN_PRE_RESULT_FN, func)
+    }
+
+    /// This will set the pre_extop operation plugin callback handler as
+    /// SLAPI_PLUGIN_PRE_EXTOP_FN. You should *not* call this directly
+    /// as the Slapi_R_Plugin_Manager will handle this for you.
+    fn set_plugin_pre_extop_fn(&self, func: extern fn(*const libc::c_void) -> isize) {
+        self._set_pb_fn_ptr(SLAPI_PLUGIN_PRE_EXTOP_FN, func)
     }
 
     /// This will get a pointer to a structure stored in the plugin private data

@@ -55,8 +55,12 @@ pub struct Slapi_R_Plugin_FN {
     pub post_search: Option<fn(&Slapi_R_PBlock) -> Result<(), PluginOperationError>>,
     /// An option type for a function callback that handles pre bind
     pub pre_bind: Option<fn(&Slapi_R_PBlock) -> Result<(), PluginOperationError>>,
+    /// An option type for a function callback that handles pre unbind
+    pub pre_unbind: Option<fn(&Slapi_R_PBlock) -> Result<(), PluginOperationError>>,
     /// An option type for a function callback that handles pre search.
     pub pre_search: Option<fn(&Slapi_R_PBlock) -> Result<(), PluginOperationError>>,
+    /// An option type for a function callback that handles pre compare.
+    pub pre_compare: Option<fn(&Slapi_R_PBlock) -> Result<(), PluginOperationError>>,
     /// An option type for a function callback that handles pre modify.
     pub pre_modify: Option<fn(&Slapi_R_PBlock) -> Result<(), PluginOperationError>>,
     /// An option type for a function callback that handles pre modrdn.
@@ -65,6 +69,16 @@ pub struct Slapi_R_Plugin_FN {
     pub pre_add: Option<fn(&Slapi_R_PBlock) -> Result<(), PluginOperationError>>,
     /// An option type for a function callback that handles pre delete.
     pub pre_delete: Option<fn(&Slapi_R_PBlock) -> Result<(), PluginOperationError>>,
+    /// An option type for a function callback that handles pre abandon.
+    pub pre_abandon: Option<fn(&Slapi_R_PBlock) -> Result<(), PluginOperationError>>,
+    /// An option type for a function callback that handles pre entry.
+    pub pre_entry: Option<fn(&Slapi_R_PBlock) -> Result<(), PluginOperationError>>,
+    /// An option type for a function callback that handles pre referal.
+    pub pre_referal: Option<fn(&Slapi_R_PBlock) -> Result<(), PluginOperationError>>,
+    /// An option type for a function callback that handles pre result.
+    pub pre_result: Option<fn(&Slapi_R_PBlock) -> Result<(), PluginOperationError>>,
+    /// An option type for a function callback that handles pre extop.
+    pub pre_extop: Option<fn(&Slapi_R_PBlock) -> Result<(), PluginOperationError>>,
 }
 
 ///
@@ -171,6 +185,67 @@ extern fn slapi_r_plugin_pre_bind_cb(slapi_pblock: *const libc::c_void) -> isize
     plugin_execute_fn_cb!(pre_bind, slapi_pblock)
 }
 
+/// The callback wrapper for pre_unbind
+extern fn slapi_r_plugin_pre_unbind_cb(slapi_pblock: *const libc::c_void) -> isize {
+    plugin_execute_fn_cb!(pre_unbind, slapi_pblock)
+}
+
+/// The callback wrapper for pre_search_fn
+extern fn slapi_r_plugin_pre_search_cb(slapi_pblock: *const libc::c_void) -> isize {
+    plugin_execute_fn_cb!(pre_search, slapi_pblock)
+}
+
+/// The callback wrapper for pre_compare
+extern fn slapi_r_plugin_pre_compare_cb(slapi_pblock: *const libc::c_void) -> isize {
+    plugin_execute_fn_cb!(pre_compare, slapi_pblock)
+}
+
+/// The callback wrapper for pre_modify
+extern fn slapi_r_plugin_pre_modify_cb(slapi_pblock: *const libc::c_void) -> isize {
+    plugin_execute_fn_cb!(pre_modify, slapi_pblock)
+}
+
+/// The callback wrapper for pre_modrdn
+extern fn slapi_r_plugin_pre_modrdn_cb(slapi_pblock: *const libc::c_void) -> isize {
+    plugin_execute_fn_cb!(pre_modrdn, slapi_pblock)
+}
+
+/// The callback wrapper for pre_add
+extern fn slapi_r_plugin_pre_add_cb(slapi_pblock: *const libc::c_void) -> isize {
+    plugin_execute_fn_cb!(pre_add, slapi_pblock)
+}
+
+/// The callback wrapper for pre_delete
+extern fn slapi_r_plugin_pre_delete_cb(slapi_pblock: *const libc::c_void) -> isize {
+    plugin_execute_fn_cb!(pre_delete, slapi_pblock)
+}
+
+/// The callback wrapper for pre_abandon
+extern fn slapi_r_plugin_pre_abandon_cb(slapi_pblock: *const libc::c_void) -> isize {
+    plugin_execute_fn_cb!(pre_abandon, slapi_pblock)
+}
+
+/// The callback wrapper for pre_entry
+extern fn slapi_r_plugin_pre_entry_cb(slapi_pblock: *const libc::c_void) -> isize {
+    plugin_execute_fn_cb!(pre_entry, slapi_pblock)
+}
+
+/// The callback wrapper for pre_referal
+extern fn slapi_r_plugin_pre_referal_cb(slapi_pblock: *const libc::c_void) -> isize {
+    plugin_execute_fn_cb!(pre_referal, slapi_pblock)
+}
+
+/// The callback wrapper for pre_result
+extern fn slapi_r_plugin_pre_result_cb(slapi_pblock: *const libc::c_void) -> isize {
+    plugin_execute_fn_cb!(pre_result, slapi_pblock)
+}
+
+/// The callback wrapper for pre_extop
+extern fn slapi_r_plugin_pre_extop_cb(slapi_pblock: *const libc::c_void) -> isize {
+    plugin_execute_fn_cb!(pre_extop, slapi_pblock)
+}
+
+
 impl<'a> Slapi_R_Plugin_Manager<'a> {
     /// Builds a new Slapi_R_Plugin_Manager. The Rust plugin can then set values
     /// on this struct, and finally will call .register() to complete the
@@ -182,11 +257,18 @@ impl<'a> Slapi_R_Plugin_Manager<'a> {
             close: None,
             post_search: None,
             pre_bind: None,
+            pre_unbind: None,
             pre_search: None,
+            pre_compare: None,
             pre_modify: None,
             pre_modrdn: None,
             pre_add: None,
             pre_delete: None,
+            pre_abandon: None,
+            pre_entry: None,
+            pre_referal: None,
+            pre_result: None,
+            pre_extop: None,
         };
 
         Slapi_R_Plugin_Manager {
@@ -221,6 +303,54 @@ impl<'a> Slapi_R_Plugin_Manager<'a> {
 
         if self.functions.pre_bind.is_some() {
             pb.set_plugin_pre_bind_fn(slapi_r_plugin_pre_bind_cb)
+        }
+
+        if self.functions.pre_unbind.is_some() {
+            pb.set_plugin_pre_unbind_fn(slapi_r_plugin_pre_unbind_cb)
+        }
+
+        if self.functions.pre_search.is_some() {
+            pb.set_plugin_pre_search_fn(slapi_r_plugin_pre_search_cb)
+        }
+
+        if self.functions.pre_compare.is_some() {
+            pb.set_plugin_pre_compare_fn(slapi_r_plugin_pre_compare_cb)
+        }
+
+        if self.functions.pre_modify.is_some() {
+            pb.set_plugin_pre_modify_fn(slapi_r_plugin_pre_modify_cb)
+        }
+
+        if self.functions.pre_modrdn.is_some() {
+            pb.set_plugin_pre_modrdn_fn(slapi_r_plugin_pre_modrdn_cb)
+        }
+
+        if self.functions.pre_add.is_some() {
+            pb.set_plugin_pre_add_fn(slapi_r_plugin_pre_add_cb)
+        }
+
+        if self.functions.pre_delete.is_some() {
+            pb.set_plugin_pre_delete_fn(slapi_r_plugin_pre_delete_cb)
+        }
+
+        if self.functions.pre_abandon.is_some() {
+            pb.set_plugin_pre_abandon_fn(slapi_r_plugin_pre_abandon_cb)
+        }
+
+        if self.functions.pre_entry.is_some() {
+            pb.set_plugin_pre_entry_fn(slapi_r_plugin_pre_entry_cb)
+        }
+
+        if self.functions.pre_referal.is_some() {
+            pb.set_plugin_pre_referal_fn(slapi_r_plugin_pre_referal_cb)
+        }
+
+        if self.functions.pre_result.is_some() {
+            pb.set_plugin_pre_result_fn(slapi_r_plugin_pre_result_cb)
+        }
+
+        if self.functions.pre_extop.is_some() {
+            pb.set_plugin_pre_extop_fn(slapi_r_plugin_pre_extop_cb)
         }
 
         // We always register the start and close functions: We have some
