@@ -2,9 +2,9 @@ AC_PREREQ([2.53])
 
 AC_INIT([ds-rust-plugins], [0.1.0])
 AM_INIT_AUTOMAKE([1.6 foreign subdir-objects])
-# m4_ifdef([AM_SILENT_RULES], [
-#     AM_SILENT_RULES([yes])
-# ])
+m4_ifdef([AM_SILENT_RULES], [
+     AM_SILENT_RULES([yes])
+])
 
 AC_CANONICAL_HOST
 
