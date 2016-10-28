@@ -18,6 +18,11 @@ pub const LDAP_SUCCESS: isize = 0;
 
 // Constants used for plugin types! These should be an enum one day. This is not complete!
 
+/// PBlock constant to retrieve the current operation
+pub const SLAPI_OPERATION: isize = 132;
+/// PBlock constant for requesting if the current operation is Replicated
+pub const SLAPI_IS_REPLICATED_OPERATION: isize = 142;
+
 /// PBlock constant for retrieving the next entry of an entry result list.
 pub const SLAPI_SEARCH_RESULT_ENTRY: isize = 194;
 /// PBlock constant for registering the close function for a plugin.

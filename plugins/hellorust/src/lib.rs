@@ -25,7 +25,6 @@ extern crate slapi_r_plugin;
 
 use slapi_r_plugin::constants;
 use slapi_r_plugin::constants::LogLevel;
-use slapi_r_plugin::entry::Slapi_R_Entry;
 use slapi_r_plugin::error::PluginOperationError;
 use slapi_r_plugin::error::PluginRegistrationError;
 use slapi_r_plugin::log::slapi_r_log_error;
@@ -50,11 +49,11 @@ impl HellorustPlugin {
     ///
     fn post_search<T: Slapi_PBlock_V3>( pb: &T ) -> Result<(), PluginOperationError> {
 
-        slapi_r_log_error_plugin!(LogLevel::FATAL, SUBSYSTEM, format!("Calling the hellorust post_search!! \n"));
+        slapi_r_log_error_plugin!(LogLevel::INFO, SUBSYSTEM, format!("Calling the hellorust post_search!! \n"));
 
         // Get the search results
         match pb.get_search_result_entry() {
-            Some(e) => slapi_r_log_error_plugin!(LogLevel::FATAL, SUBSYSTEM, format!("Retrieved entry {:?} \n", e)),
+            Some(e) => slapi_r_log_error_plugin!(LogLevel::INFO, SUBSYSTEM, format!("Retrieved entry {:?} \n", e)),
             None => {},
         };
 
@@ -68,7 +67,7 @@ impl HellorustPlugin {
     /// as part of a plugin callback.
     ///
     fn pre_bind<T: Slapi_PBlock_V3>( _: &T ) -> Result<(), PluginOperationError> {
-        slapi_r_log_error_plugin!(LogLevel::FATAL, SUBSYSTEM, format!("Calling the hellorust pre_bind!! \n"));
+        slapi_r_log_error_plugin!(LogLevel::INFO, SUBSYSTEM, format!("Calling the hellorust pre_bind!! \n"));
         Ok(())
     }
 
@@ -79,7 +78,7 @@ impl HellorustPlugin {
     /// as part of a plugin callback.
     ///
     fn pre_unbind<T: Slapi_PBlock_V3>( _: &T ) -> Result<(), PluginOperationError> {
-        slapi_r_log_error_plugin!(LogLevel::FATAL, SUBSYSTEM, format!("Calling the hellorust pre_unbind!! \n"));
+        slapi_r_log_error_plugin!(LogLevel::INFO, SUBSYSTEM, format!("Calling the hellorust pre_unbind!! \n"));
         Ok(())
     }
 
@@ -90,7 +89,7 @@ impl HellorustPlugin {
     /// as part of a plugin callback.
     ///
     fn pre_search<T: Slapi_PBlock_V3>( _: &T ) -> Result<(), PluginOperationError> {
-        slapi_r_log_error_plugin!(LogLevel::FATAL, SUBSYSTEM, format!("Calling the hellorust pre_search!! \n"));
+        slapi_r_log_error_plugin!(LogLevel::INFO, SUBSYSTEM, format!("Calling the hellorust pre_search!! \n"));
         Ok(())
     }
 
@@ -101,7 +100,7 @@ impl HellorustPlugin {
     /// as part of a plugin callback.
     ///
     fn pre_compare<T: Slapi_PBlock_V3>( _: &T ) -> Result<(), PluginOperationError> {
-        slapi_r_log_error_plugin!(LogLevel::FATAL, SUBSYSTEM, format!("Calling the hellorust pre_compare!! \n"));
+        slapi_r_log_error_plugin!(LogLevel::INFO, SUBSYSTEM, format!("Calling the hellorust pre_compare!! \n"));
         Ok(())
     }
 
@@ -112,7 +111,7 @@ impl HellorustPlugin {
     /// as part of a plugin callback.
     ///
     fn pre_modify<T: Slapi_PBlock_V3>( _: &T ) -> Result<(), PluginOperationError> {
-        slapi_r_log_error_plugin!(LogLevel::FATAL, SUBSYSTEM, format!("Calling the hellorust pre_modify!! \n"));
+        slapi_r_log_error_plugin!(LogLevel::INFO, SUBSYSTEM, format!("Calling the hellorust pre_modify!! \n"));
         Ok(())
     }
 
@@ -123,7 +122,7 @@ impl HellorustPlugin {
     /// as part of a plugin callback.
     ///
     fn pre_modrdn<T: Slapi_PBlock_V3>( _: &T ) -> Result<(), PluginOperationError> {
-        slapi_r_log_error_plugin!(LogLevel::FATAL, SUBSYSTEM, format!("Calling the hellorust pre_modrdn!! \n"));
+        slapi_r_log_error_plugin!(LogLevel::INFO, SUBSYSTEM, format!("Calling the hellorust pre_modrdn!! \n"));
         Ok(())
     }
 
@@ -134,7 +133,7 @@ impl HellorustPlugin {
     /// as part of a plugin callback.
     ///
     fn pre_add<T: Slapi_PBlock_V3>( _: &T ) -> Result<(), PluginOperationError> {
-        slapi_r_log_error_plugin!(LogLevel::FATAL, SUBSYSTEM, format!("Calling the hellorust pre_add!! \n"));
+        slapi_r_log_error_plugin!(LogLevel::INFO, SUBSYSTEM, format!("Calling the hellorust pre_add!! \n"));
         Ok(())
     }
 
@@ -145,7 +144,7 @@ impl HellorustPlugin {
     /// as part of a plugin callback.
     ///
     fn pre_delete<T: Slapi_PBlock_V3>( _: &T ) -> Result<(), PluginOperationError> {
-        slapi_r_log_error_plugin!(LogLevel::FATAL, SUBSYSTEM, format!("Calling the hellorust pre_delete!! \n"));
+        slapi_r_log_error_plugin!(LogLevel::INFO, SUBSYSTEM, format!("Calling the hellorust pre_delete!! \n"));
         Ok(())
     }
 
@@ -156,7 +155,7 @@ impl HellorustPlugin {
     /// as part of a plugin callback.
     ///
     fn pre_abandon<T: Slapi_PBlock_V3>( _: &T ) -> Result<(), PluginOperationError> {
-        slapi_r_log_error_plugin!(LogLevel::FATAL, SUBSYSTEM, format!("Calling the hellorust pre_abandon!! \n"));
+        slapi_r_log_error_plugin!(LogLevel::INFO, SUBSYSTEM, format!("Calling the hellorust pre_abandon!! \n"));
         Ok(())
     }
 
@@ -167,7 +166,7 @@ impl HellorustPlugin {
     /// as part of a plugin callback.
     ///
     fn pre_entry<T: Slapi_PBlock_V3>( _: &T ) -> Result<(), PluginOperationError> {
-        slapi_r_log_error_plugin!(LogLevel::FATAL, SUBSYSTEM, format!("Calling the hellorust pre_entry!! \n"));
+        slapi_r_log_error_plugin!(LogLevel::INFO, SUBSYSTEM, format!("Calling the hellorust pre_entry!! \n"));
         Ok(())
     }
 
@@ -178,7 +177,7 @@ impl HellorustPlugin {
     /// as part of a plugin callback.
     ///
     fn pre_referal<T: Slapi_PBlock_V3>( _: &T ) -> Result<(), PluginOperationError> {
-        slapi_r_log_error_plugin!(LogLevel::FATAL, SUBSYSTEM, format!("Calling the hellorust pre_referal!! \n"));
+        slapi_r_log_error_plugin!(LogLevel::INFO, SUBSYSTEM, format!("Calling the hellorust pre_referal!! \n"));
         Ok(())
     }
 
@@ -189,7 +188,7 @@ impl HellorustPlugin {
     /// as part of a plugin callback.
     ///
     fn pre_result<T: Slapi_PBlock_V3>( _: &T ) -> Result<(), PluginOperationError> {
-        slapi_r_log_error_plugin!(LogLevel::FATAL, SUBSYSTEM, format!("Calling the hellorust pre_result!! \n"));
+        slapi_r_log_error_plugin!(LogLevel::INFO, SUBSYSTEM, format!("Calling the hellorust pre_result!! \n"));
         Ok(())
     }
 
@@ -200,7 +199,7 @@ impl HellorustPlugin {
     /// as part of a plugin callback.
     ///
     fn pre_extop<T: Slapi_PBlock_V3>( _: &T ) -> Result<(), PluginOperationError> {
-        slapi_r_log_error_plugin!(LogLevel::FATAL, SUBSYSTEM, format!("Calling the hellorust pre_extop!! \n"));
+        slapi_r_log_error_plugin!(LogLevel::INFO, SUBSYSTEM, format!("Calling the hellorust pre_extop!! \n"));
         Ok(())
     }
 
@@ -215,7 +214,7 @@ impl Slapi_Plugin_V3 for HellorustPlugin {
     ///
     fn init<T: Slapi_PBlock_Init_V3>( pb: T ) -> Result<(), PluginRegistrationError> {
         // need to do something better here ...
-        match slapi_r_log_error(LogLevel::FATAL, SUBSYSTEM, format!("Hello rust!\n")) {
+        match slapi_r_log_error(LogLevel::INFO, SUBSYSTEM, format!("Hello rust!\n")) {
             Ok(_) => {},
             Err(_) => return Err(PluginRegistrationError::LoggingError),
         };
@@ -248,15 +247,15 @@ impl Slapi_Plugin_V3 for HellorustPlugin {
 
     /// A start callback, that allows the plugin to initialise and start any required
     /// datastructures, etc.
-    fn start<T: Slapi_PBlock_V3>( pb: &T ) -> Result<(), PluginOperationError> {
-        slapi_r_log_error_plugin!(LogLevel::FATAL, SUBSYSTEM, format!("Calling the hellorust start callback \n") );
+    fn start<T: Slapi_PBlock_V3>( _: &T ) -> Result<(), PluginOperationError> {
+        slapi_r_log_error_plugin!(LogLevel::INFO, SUBSYSTEM, format!("Calling the hellorust start callback \n") );
         Ok(())
     }
 
     /// A close callback, that allows the plugin to destroy any structuse made in
     /// the start callback
-    fn close<T: Slapi_PBlock_V3>( pb: &T ) -> Result<(), PluginOperationError> {
-        slapi_r_log_error_plugin!(LogLevel::FATAL, SUBSYSTEM, format!("Calling the hellorust close callback \n") );
+    fn close<T: Slapi_PBlock_V3>( _: &T ) -> Result<(), PluginOperationError> {
+        slapi_r_log_error_plugin!(LogLevel::INFO, SUBSYSTEM, format!("Calling the hellorust close callback \n") );
         Ok(())
     }
 

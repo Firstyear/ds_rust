@@ -48,6 +48,16 @@ pub mod log;
 /// iterator type for use during searches. The iterator is built by pblock.
 pub mod entry;
 ///
+/// Operation module
+///
+/// This module wraps and represents operations that the directory server is
+/// currently processing. These are normally retrieved from the pblock, and
+/// contain the current state information regarding the actions being performed
+/// by this thread. It contains flags such as if the operation is from internal
+/// or a replica, it contains the type of operation IE add, mod, search, and 
+/// may contain other related data.
+pub mod operation;
+///
 /// Pblock Module
 ///
 /// This module wraps the Directory Server Parameter Block data structure.

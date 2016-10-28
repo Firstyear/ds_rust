@@ -18,6 +18,7 @@ use std::mem;
 use super::constants::*;
 use super::error::PBlockError;
 use super::entry::Slapi_R_Entry;
+use super::operation::Slapi_R_Operation;
 // use std::ops::Drop;
 
 // Wrapper for the pblock in rust.
@@ -78,7 +79,12 @@ pub trait Slapi_PBlock_Init_V3 {
 /// very easily, as well as allowing testing to occur.
 #[allow(non_camel_case_types)]
 pub trait Slapi_PBlock_V3 {
+    /// Returns the set of entries that were retrieved in this search.
     fn get_search_result_entry(&self) -> Option<Slapi_R_Entry>;
+    /// Returns a boolean if this operation is from a replication event.
+    fn get_is_replicated_operation(&self) -> Option<bool>;
+    /// Returns the current Operation that the directory Server is processing.
+    fn get_operation(&self) -> Option<Slapi_R_Operation>;
 }
 
 #[derive(Debug)]
@@ -418,6 +424,28 @@ impl Slapi_PBlock_V3 for Slapi_R_PBlock {
     fn get_search_result_entry(&self) -> Option<Slapi_R_Entry> {
         match self._get_void_ptr(SLAPI_SEARCH_RESULT_ENTRY) {
             Some(p) => Some(Slapi_R_Entry::new(p)),
+            None => None,
+        }
+    }
+
+    /// This will return a bool of if the current operation is replicated
+    /// or not.
+    fn get_is_replicated_operation(&self) -> Option<bool> {
+        match self._get_isize(SLAPI_IS_REPLICATED_OPERATION) {
+            Some(e) => {
+                match e {
+                    0 => Some(false),
+                    _ => Some(true),
+                }
+            }
+            None => None
+        }
+    }
+
+    /// This will retrieve the current slapi_operation if one is present
+    fn get_operation(&self) -> Option<Slapi_R_Operation> {
+        match self._get_void_ptr(SLAPI_OPERATION) {
+            Some(p) => Some(Slapi_R_Operation::new(p)),
             None => None,
         }
     }

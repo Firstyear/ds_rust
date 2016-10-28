@@ -25,4 +25,9 @@ def test_setup_ds_minimal(topology):
     topology.standalone.start()
     assert(len(topology.standalone.ds_error_log.match('.*ro_replica started.*')) > 0)
 
+    # Now try and add something ....
+    # It should fail. Check the log!
+
+    # Try and mod the basedn. Should also fail!
+    # Check the log.
 
