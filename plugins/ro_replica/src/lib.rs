@@ -25,7 +25,6 @@ const SUBSYSTEM: &'static str = "plugins::ro_replica";
 
 use slapi_r_plugin::constants;
 use slapi_r_plugin::constants::LogLevel;
-use slapi_r_plugin::operation::Slapi_R_Operation;
 use slapi_r_plugin::error::PluginOperationError;
 use slapi_r_plugin::error::PluginRegistrationError;
 use slapi_r_plugin::log::slapi_r_log_error;

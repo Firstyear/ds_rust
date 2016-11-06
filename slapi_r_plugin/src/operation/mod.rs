@@ -43,21 +43,19 @@ impl Slapi_R_Operation {
     /// This is a private "c like" function which handles requesting the flag
     /// from the operation in directory Server.
     fn is_flag_set(&self, flag: isize) -> bool {
-        let mut flag_set: isize = 0;
-        unsafe {
-            flag_set = operation_is_flag_set(self.slapi_operation, flag)
-        }
-        if flag_set != 0 {
+        if unsafe { operation_is_flag_set(self.slapi_operation, flag) } != 0 {
             true
         } else {
             false
         }
     }
 
+    /// Is this operation from a replicated event.
     pub fn is_replicated(&self) -> bool {
         self.is_flag_set(OP_FLAG_REPLICATED | OP_FLAG_LEGACY_REPLICATION_DN)
     }
 
+    /// Is this operation from an internal server event.
     pub fn is_internal(&self) -> bool {
         self.is_flag_set(OP_FLAG_INTERNAL)
     }
