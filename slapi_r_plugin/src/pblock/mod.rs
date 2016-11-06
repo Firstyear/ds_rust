@@ -15,8 +15,11 @@
 use libc;
 use std::ptr;
 use std::mem;
+use std::ffi::CString;
+use std::os::raw::c_char;
 use super::constants::*;
 use super::error::PBlockError;
+use super::error::PluginOperationError;
 use super::entry::Slapi_R_Entry;
 use super::operation::Slapi_R_Operation;
 // use std::ops::Drop;
@@ -85,6 +88,13 @@ pub trait Slapi_PBlock_V3 {
     //fn get_is_replicated_operation(&self) -> Option<bool>;
     /// Returns the current Operation that the directory Server is processing.
     fn get_operation(&self) -> Option<Slapi_R_Operation>;
+    /// Function allowing plugins (and internal DS parts) to trigger a result send
+    /// to the client.
+    /// This is needed for plugins, especially if they error or are prematurely ending
+    /// an operation. This actually indicates "yes, I really want you tell the client
+    /// this failed now".
+    /// After you have called this, your plugin MUST return an Err() type!
+    fn send_ldap_result(&self, error: PluginOperationError, message: &str);
 }
 
 #[derive(Debug)]
@@ -98,12 +108,15 @@ pub struct Slapi_R_PBlock {
 }
 
 extern {
+    // pblock.c
     fn slapi_pblock_new() -> *const libc::c_void;
     fn slapi_pblock_init(pb: *const libc::c_void);
     fn slapi_pblock_destroy(pb: *const libc::c_void);
 
     fn slapi_pblock_get(pb: *const libc::c_void, arg: isize, value: *const libc::c_void);
     fn slapi_pblock_set(pb: *const libc::c_void, arg: isize, value: *const libc::c_void);
+    // plugin.c
+    fn slapi_send_ldap_result(pb: *const libc::c_void, err: isize, matched: *const c_char, errmsg: *const c_char, nentries: isize, urls: *const libc::c_void);
 }
 
 
@@ -413,7 +426,6 @@ impl Slapi_PBlock_Init_V3 for Slapi_R_PBlock {
         }
         Ok(())
     }
-
 }
 
 impl Slapi_PBlock_V3 for Slapi_R_PBlock {
@@ -447,6 +459,22 @@ impl Slapi_PBlock_V3 for Slapi_R_PBlock {
         match self._get_void_ptr(SLAPI_OPERATION) {
             Some(p) => Some(Slapi_R_Operation::new(p)),
             None => None,
+        }
+    }
+
+    /// Function allowing plugins (and internal DS parts) to trigger a result send
+    /// to the client.
+    /// This is needed for plugins, especially if they error or are prematurely ending
+    /// an operation. This actually indicates "yes, I really want you tell the client
+    /// this failed now".
+    /// After you have called this, your plugin MUST return an Err() type!
+    fn send_ldap_result(&self, error: PluginOperationError, message: &str) {
+        let null_urls_ptr: *const libc::c_void = ptr::null() as *const libc::c_void;
+        let null_message_ptr: *const c_char = ptr::null() as *const c_char;
+        let c_message = CString::new(message).unwrap();
+        // Convert the message to a cstring
+        unsafe {
+            slapi_send_ldap_result(self.slapi_pblock, error.as_ds_isize(), null_message_ptr, c_message.as_ptr(), 0, null_urls_ptr);
         }
     }
 }

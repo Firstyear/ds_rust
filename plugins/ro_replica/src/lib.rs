@@ -51,12 +51,13 @@ impl RoReplicaPlugin {
                     Ok(())
                 } else {
                     slapi_r_log_error_plugin!(LogLevel::INFO, SUBSYSTEM, format!("Operation is external, rejecting!\n"));
-                    // I think we actually need to send something to the client here ....
+                    pb.send_ldap_result(PluginOperationError::UnwillingToPerform, "Can not modify readonly database.");
                     Err(PluginOperationError::UnwillingToPerform)
                 }
             }
             None => {
                 slapi_r_log_error_plugin!(LogLevel::ERR, SUBSYSTEM, format!("Could not retrieve active operation\n"));
+                pb.send_ldap_result(PluginOperationError::UnwillingToPerform, "An error occured processing this operation.");
                 Err(PluginOperationError::Unknown)
             }
         }
