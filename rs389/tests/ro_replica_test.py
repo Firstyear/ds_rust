@@ -12,9 +12,13 @@
 
 DEBUGGING = True
 
+import ldap
+
 from . import topology
 
 from rs389 import RoreplicaPlugin
+from lib389 import Entry
+from lib389._constants import DEFAULT_SUFFIX
 
 def test_setup_ds_minimal(topology):
     # Make sure we can start stop.
@@ -26,6 +30,18 @@ def test_setup_ds_minimal(topology):
     assert(len(topology.standalone.ds_error_log.match('.*ro_replica started.*')) > 0)
 
     # Now try and add something ....
+    try:
+        topology.standalone.add(Entry((
+            "uid=user,%s" % DEFAULT_SUFFIX,
+            {
+                'uid': ['user',],
+                'objectClass': ['top', 'account'],
+
+            })))
+        # Bad! We shouldn't be allowed to add!
+        assert(False)
+    except ldap.UNWILLING_TO_PERFORM:
+        pass
     # It should fail. Check the log!
 
     # Try and mod the basedn. Should also fail!

@@ -81,8 +81,8 @@ pub trait Slapi_PBlock_Init_V3 {
 pub trait Slapi_PBlock_V3 {
     /// Returns the set of entries that were retrieved in this search.
     fn get_search_result_entry(&self) -> Option<Slapi_R_Entry>;
-    /// Returns a boolean if this operation is from a replication event.
-    fn get_is_replicated_operation(&self) -> Option<bool>;
+    // Returns a boolean if this operation is from a replication event.
+    //fn get_is_replicated_operation(&self) -> Option<bool>;
     /// Returns the current Operation that the directory Server is processing.
     fn get_operation(&self) -> Option<Slapi_R_Operation>;
 }
@@ -428,19 +428,19 @@ impl Slapi_PBlock_V3 for Slapi_R_PBlock {
         }
     }
 
-    /// This will return a bool of if the current operation is replicated
-    /// or not.
-    fn get_is_replicated_operation(&self) -> Option<bool> {
-        match self._get_isize(SLAPI_IS_REPLICATED_OPERATION) {
-            Some(e) => {
-                match e {
-                    0 => Some(false),
-                    _ => Some(true),
-                }
-            }
-            None => None
-        }
-    }
+    // This will return a bool of if the current operation is replicated
+    // or not.
+    // fn get_is_replicated_operation(&self) -> Option<bool> {
+    //     match self._get_isize(SLAPI_IS_REPLICATED_OPERATION) {
+    //         Some(e) => {
+    //             match e {
+    //                 0 => Some(false),
+    //                 _ => Some(true),
+    //             }
+    //         }
+    //         None => None
+    //     }
+    // }
 
     /// This will retrieve the current slapi_operation if one is present
     fn get_operation(&self) -> Option<Slapi_R_Operation> {

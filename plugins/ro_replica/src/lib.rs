@@ -46,25 +46,21 @@ impl RoReplicaPlugin {
         let operation = pb.get_operation();
         match operation {
             Some(op) => {
-                slapi_r_log_error_plugin!(LogLevel::INFO, SUBSYSTEM, format!("Operation is == {:?}\n", op));
+                if op.is_replicated() || op.is_internal() {
+                    slapi_r_log_error_plugin!(LogLevel::INFO, SUBSYSTEM, format!("Operation is replicated or internal, allowing\n"));
+                    Ok(())
+                } else {
+                    slapi_r_log_error_plugin!(LogLevel::INFO, SUBSYSTEM, format!("Operation is external, rejecting!\n"));
+                    // I think we actually need to send something to the client here ....
+                    Err(PluginOperationError::UnwillingToPerform)
+                }
             }
             None => {
                 slapi_r_log_error_plugin!(LogLevel::ERR, SUBSYSTEM, format!("Could not retrieve active operation\n"));
+                Err(PluginOperationError::Unknown)
             }
         }
-
-
-        let is_replicated = pb.get_is_replicated_operation();
-        match is_replicated {
-            Some(r) => {
-                slapi_r_log_error_plugin!(LogLevel::INFO, SUBSYSTEM, format!("Operation is replicated == {}\n", r));
-            }
-            None => {
-                slapi_r_log_error_plugin!(LogLevel::ERR, SUBSYSTEM, format!("Could not retrieve operation status\n"));
-            }
-        }
-        Ok(())
-    }
+    } // intercept_operation()
 }
 
 

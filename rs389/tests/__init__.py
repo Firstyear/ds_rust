@@ -65,6 +65,12 @@ def topology(request):
     # Make sure we can connect
     instance.open()
 
+    # Create the example backend with sample entries.
+    instance.backends.create(properties= {
+        'cn' : ['userRoot'],
+        'nsslapd-suffix' : ['dc=example,dc=com'],
+        })
+
     def fin():
         if instance.exists() and not DEBUGGING:
             instance.delete()

@@ -47,6 +47,8 @@ pub enum PluginOperationError {
     Unknown,
     /// An error occured attempting to log a message.
     LoggingError,
+    /// Unwilling to perform
+    UnwillingToPerform,
 }
 
 impl PluginOperationError {
@@ -56,6 +58,8 @@ impl PluginOperationError {
         match self {
             PluginOperationError::Unknown => -1,
             PluginOperationError::LoggingError => -2,
+            // From ldap.h
+            PluginOperationError::UnwillingToPerform => 0x35,
         }
     }
 }
