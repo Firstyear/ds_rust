@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/PR-SVG-20010719/DTD/svg10.dtd">
+<svg width="51cm" height="32cm" viewBox="132 102 1017 630" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <g>
+    <rect style="fill: #9bceff" x="267" y="129" width="169" height="602"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="267" y="129" width="169" height="602"/>
+    <text font-size="28.2222" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="351.5" y="438.561">
+      <tspan x="351.5" y="438.561">C</tspan>
+    </text>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="286" y="115">
+    <tspan x="286" y="115">ns-slapd / libslapd.so</tspan>
+  </text>
+  <g>
+    <rect style="fill: #ff7c00" x="641.1" y="198" width="169" height="532"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="641.1" y="198" width="169" height="532"/>
+    <text font-size="28.2222" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="725.6" y="472.561">
+      <tspan x="725.6" y="472.561">Rust</tspan>
+    </text>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="647" y="184">
+    <tspan x="647" y="184">slapi_r_plugin_manager</tspan>
+  </text>
+  <g>
+    <rect style="fill: #ff7c00" x="978.1" y="129.4" width="169" height="601.6"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="978.1" y="129.4" width="169" height="601.6"/>
+    <text font-size="28.2222" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="1062.6" y="438.761">
+      <tspan x="1062.6" y="438.761">Rust</tspan>
+    </text>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="986" y="114">
+    <tspan x="986" y="114">Rust Plugin / HelloRust!</tspan>
+  </text>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="451" y1="145" x2="954" y2="145.979"/>
+    <polygon style="fill: #000000" points="953.99,150.979 964,145.998 954.01,140.979 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="953.99,150.979 964,145.998 954.01,140.979 "/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="647" y="134">
+    <tspan x="647" y="134">1. slapi_r_plugin_init_fn</tspan>
+  </text>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="971" y1="209" x2="831" y2="209.927"/>
+    <polygon style="fill: #000000" points="830.967,204.927 821,209.993 831.033,214.927 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="830.967,204.927 821,209.993 831.033,214.927 "/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1026" y="168">
+    <tspan x="1026" y="168">2.Plugin Init </tspan>
+  </text>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="1010" y1="154" x2="1010" y2="188"/>
+    <polygon style="fill: #000000" points="1005,188 1010,198 1015,188 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1005,188 1010,198 1015,188 "/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="843" y="196">
+    <tspan x="843" y="196">3. New Callback</tspan>
+  </text>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="634" y1="230" x2="458" y2="230.941"/>
+    <polygon style="fill: #000000" points="457.973,225.941 448,230.995 458.027,235.941 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="457.973,225.941 448,230.995 458.027,235.941 "/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="472" y="218">
+    <tspan x="472" y="218">4. Register Callback</tspan>
+  </text>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="452" y1="270" x2="619" y2="270.938"/>
+    <polygon style="fill: #000000" points="618.972,275.938 629,270.994 619.028,265.938 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="618.972,275.938 629,270.994 619.028,265.938 "/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="472" y="257">
+    <tspan x="472" y="257">5. Register response</tspan>
+  </text>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="822" y1="294" x2="960" y2="294"/>
+    <polygon style="fill: #000000" points="960,299 970,294 960,289 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="960,299 970,294 960,289 "/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="850" y="281">
+    <tspan x="850" y="281">6. Response</tspan>
+  </text>
+  <g>
+    <path style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 20 8 4 8; stroke: #000000" d="M 995,294 A 39.5127,39.5127 0 0 0 1005.63,216.179"/>
+    <polygon style="fill: #000000" points="1005.87,209.723 996,214.975 1006.12,219.72 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1005.87,209.723 996,214.975 1006.12,219.72 "/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1062.6" y="430.2">
+    <tspan x="1062.6" y="430.2"></tspan>
+  </text>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1057" y="258">
+    <tspan x="1057" y="258">7 - Repeat</tspan>
+  </text>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="964" y1="343" x2="834" y2="343.922"/>
+    <polygon style="fill: #000000" points="833.964,338.922 824,343.993 834.035,348.922 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="833.964,338.922 824,343.993 834.035,348.922 "/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="839" y="330">
+    <tspan x="839" y="330">7. Plugin Register</tspan>
+  </text>
+  <g>
+    <path style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 20 8 4 8; stroke: #000000" d="M 1000.86,337.051 A 19.4693,19.4693 0 0 0 989,300"/>
+    <polygon style="fill: #000000" points="1002.66,334.83 991.987,338.16 1001.06,344.7 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1002.66,334.83 991.987,338.16 1001.06,344.7 "/>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="627" y1="361" x2="462" y2="361.938"/>
+    <polygon style="fill: #000000" points="461.971,356.938 452,361.994 462.028,366.937 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="461.971,356.938 452,361.994 462.028,366.937 "/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="464" y="349">
+    <tspan x="464" y="349">8. Set Plugin Registration</tspan>
+  </text>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="451.106" y1="401.08" x2="618.106" y2="402.018"/>
+    <polygon style="fill: #000000" points="618.078,407.018 628.106,402.074 618.134,397.018 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="618.078,407.018 628.106,402.074 618.134,397.018 "/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="470" y="390">
+    <tspan x="470" y="390">9. Register Response</tspan>
+  </text>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="625.336" y1="441.08" x2="460.336" y2="442.018"/>
+    <polygon style="fill: #000000" points="460.307,437.018 450.336,442.074 460.364,447.017 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="460.307,437.018 450.336,442.074 460.364,447.017 "/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="477" y="429">
+    <tspan x="477" y="429">10. add srpm cbs</tspan>
+  </text>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="448.106" y1="481.08" x2="615.106" y2="482.018"/>
+    <polygon style="fill: #000000" points="615.078,487.018 625.106,482.074 615.134,477.018 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="615.078,487.018 625.106,482.074 615.134,477.018 "/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="500" y="469">
+    <tspan x="500" y="469">11. Result</tspan>
+  </text>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="820.1" y1="519.018" x2="958.1" y2="519.018"/>
+    <polygon style="fill: #000000" points="958.1,524.018 968.1,519.018 958.1,514.018 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="958.1,524.018 968.1,519.018 958.1,514.018 "/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="858.1" y="506.3">
+    <tspan x="858.1" y="506.3">12. Response</tspan>
+  </text>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1004" y="527">
+    <tspan x="1004" y="527">13. Done, Ready.</tspan>
+  </text>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="447.106" y1="569.08" x2="614.106" y2="570.018"/>
+    <polygon style="fill: #000000" points="614.078,575.018 624.106,570.074 614.134,565.018 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="614.078,575.018 624.106,570.074 614.134,565.018 "/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="485" y="560">
+    <tspan x="485" y="560">14. Operation</tspan>
+  </text>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="624.336" y1="603.08" x2="459.336" y2="604.018"/>
+    <polygon style="fill: #000000" points="459.307,599.018 449.336,604.074 459.364,609.017 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="459.307,599.018 449.336,604.074 459.364,609.017 "/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="469" y="593">
+    <tspan x="469" y="593">15. Get Private Data</tspan>
+  </text>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="449.106" y1="638.08" x2="616.106" y2="639.018"/>
+    <polygon style="fill: #000000" points="616.078,644.018 626.106,639.074 616.134,634.018 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="616.078,644.018 626.106,639.074 616.134,634.018 "/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="482" y="627">
+    <tspan x="482" y="627">16. Private Data</tspan>
+  </text>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="665" y="656">
+    <tspan x="665" y="656">17. Get CB Target</tspan>
+  </text>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="820.1" y1="668.018" x2="958.1" y2="668.018"/>
+    <polygon style="fill: #000000" points="958.1,673.018 968.1,668.018 958.1,663.018 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="958.1,673.018 968.1,668.018 958.1,663.018 "/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="852" y="654">
+    <tspan x="852" y="654">18. Callback</tspan>
+  </text>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1019" y="690">
+    <tspan x="1019" y="690">19. Process</tspan>
+  </text>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="966.336" y1="701.096" x2="836.336" y2="702.018"/>
+    <polygon style="fill: #000000" points="836.3,697.018 826.336,702.089 836.371,707.018 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="836.3,697.018 826.336,702.089 836.371,707.018 "/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="859" y="693">
+    <tspan x="859" y="693">20. Result</tspan>
+  </text>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="681" y="711">
+    <tspan x="681" y="711">21. Translate</tspan>
+  </text>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="625.336" y1="718.08" x2="460.336" y2="719.018"/>
+    <polygon style="fill: #000000" points="460.307,714.018 450.336,719.074 460.364,724.017 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="460.307,714.018 450.336,719.074 460.364,724.017 "/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="479" y="710">
+    <tspan x="479" y="710">22. Ds return code</tspan>
+  </text>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="351.5" y="430">
+    <tspan x="351.5" y="430"></tspan>
+  </text>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 4; stroke: #000000" x1="133" y1="572" x2="243" y2="572"/>
+    <polygon style="fill: #000000" points="243,577 253,572 243,567 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="243,577 253,572 243,567 "/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="142" y="558">
+    <tspan x="142" y="558">Client Operation</tspan>
+  </text>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="351.5" y="430">
+    <tspan x="351.5" y="430"></tspan>
+  </text>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="725.6" y="464">
+    <tspan x="725.6" y="464"></tspan>
+  </text>
+</svg>
