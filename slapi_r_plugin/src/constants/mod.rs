@@ -30,7 +30,7 @@ pub const SLAPI_PLUGIN_CLOSE_FN: isize = 210;
 /// PBlock constant for registering the start function for a plugin.
 pub const SLAPI_PLUGIN_START_FN: isize = 212;
 
-/// PBlock constant for registering a
+/// PBlock constant for registering a pre BIND operation.
 pub const SLAPI_PLUGIN_PRE_BIND_FN: isize = 401;
 /// PBlock constant for registering a pre UNBIND operation.
 pub const SLAPI_PLUGIN_PRE_UNBIND_FN: isize = 402;
